@@ -4,6 +4,10 @@
 	"name": "molisensext_analysis",
 	"context": "..",
 	"dockerFile": "Dockerfile",
+	"mounts": [
+		"source=\\\\wsl.localhost\\Ubuntu-20.04\\home\\grisi\\projects\\MOLISENS\\ade\\MOLISENS\\bagfiles,target=/workspaces/molisensext_analysis/data/0external/ubuntu2004_bagfiles,type=bind,consistency=cached",
+		"source=\\\\wsl.localhost\\Ubuntu-20.04\\home\\grisi\\projects\\MOLISENS\\ade\\MOLISENS\\molisens_ws\\src\\drivers\\lufft_weather_station\\lufft_wsx_interfaces\\msg,target=/workspaces/molisensext_analysis/data/0external/lufft_wsx_interfaces/msg,type=bind,consistency=cached"
+	],
 	"customizations": {
 		"vscode": {
 			"extensions": [

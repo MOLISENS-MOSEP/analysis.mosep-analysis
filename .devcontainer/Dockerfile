@@ -1,4 +1,4 @@
-FROM ghcr.io/tgoelles/python_docker:v0.5.0_py3.11
+FROM tgoelles/pointcloudset:v0.9.0
 
 ENV DEBIAN_FRONTEND=noninteractive
 
