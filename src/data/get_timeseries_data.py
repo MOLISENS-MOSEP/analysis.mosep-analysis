@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from src.data import config
 
 
@@ -20,7 +22,6 @@ from rosbags.rosbag2 import Reader
 
 # from rosbags.highlevel import AnyReader as Reader
 from rosbags.serde import deserialize_cdr
-
 
 
 def guess_msgtype(path: Path) -> str:
@@ -50,13 +51,18 @@ def register_custom_ros_msgs(path_to_msgs, verbose=False):
     register_types(add_types)
 
     try:
-        from rosbags.typesys.types import lufft_wsx_interfaces__msg__LufftWSXXX as LufftWSXXX
-        
+        from rosbags.typesys.types import (
+            lufft_wsx_interfaces__msg__LufftWSXXX as LufftWSXXX,
+        )
+
     except ImportError:
-        print("Could not import custom message types. Please check your ROS installation.")
-    
+        print(
+            "Could not import custom message types. Please check your ROS installation."
+        )
+
     if verbose:
         from pydoc import render_doc
+
         rprint(render_doc(LufftWSXXX))
 
 
@@ -65,7 +71,6 @@ def list_topics_of_bagfile(bag_file):
     table = Table(title="Content of bag file")
     table.add_column("Topic", style="cyan")
     table.add_column("MSG", style="magenta")
-
 
     # create reader instance and open for reading
     topics = []
@@ -122,15 +127,17 @@ def load(bag_file, topic, path_to_custom_msgs=None):
     if path_to_custom_msgs:
         register_custom_ros_msgs(path_to_custom_msgs, verbose=False)
 
-
     data = {}
 
     with Reader(bag_file) as reader:
-        connections = [
-            x for x in reader.connections if x.topic == topic
-        ]
+        connections = [x for x in reader.connections if x.topic == topic]
         for connection, timestamp, rawdata in reader.messages(connections=connections):
-            msg = deserialize_cdr(rawdata, connection.msgtype)
+            try:
+                msg = deserialize_cdr(rawdata, connection.msgtype)
+            except KeyError as e:
+                raise KeyError(
+                    f"Could not deserialize message: {e}. Include the path to the custom messages (path_to_custom_msgs)."
+                ) from e
             # print(msg.header.frame_id)
             timestamp = pd.to_datetime(
                 msg.header.stamp.sec * 1e9 + msg.header.stamp.nanosec,
@@ -143,15 +150,13 @@ def load(bag_file, topic, path_to_custom_msgs=None):
     return pd.DataFrame(data).T
 
 
-
-
-if __name__=="__main__":
+if __name__ == "__main__":
     # print(list(Path(config.PATH_TO_LUFFT_MSGS).glob("**/*")))
     # list_topics_of_bagfile("/workspaces/MOLISENSext_analysis/data/1raw/bad_aussee/data/molisens_met_2023_04_14-09_23_34")
     # register_custom_ros_msgs(config.PATH_TO_LUFFT_MSGS, verbose=False)
     df = load(
-        "/workspaces/MOLISENSext_analysis/data/1raw/bad_aussee/data/molisens_met_2023_04_14-09_23_34", 
-        "/sensing/aws/ws100_measurements", 
-        config.PATH_TO_LUFFT_MSGS
+        "/workspaces/MOLISENSext_analysis/data/1raw/bad_aussee/data/molisens_met_2023_04_14-09_23_34",
+        "/sensing/aws/ws100_measurements",
+        config.PATH_TO_LUFFT_MSGS,
     )
     print(df)
