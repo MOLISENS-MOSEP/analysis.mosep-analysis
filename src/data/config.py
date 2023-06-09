@@ -12,3 +12,9 @@ PROCESSED_DATA_FOLDER = Path.joinpath(DATA_FOLDER, "3processed")
 EXTERNAL_DATA_FOLDER = Path.joinpath(DATA_FOLDER, "0external")
 
 PATH_TO_LUFFT_MSGS = PROJECT_FOLDER / Path("data/0external/lufft_wsx_interfaces/msg")
+
+PC_TOPICS = [
+    "/sensing/lidar/points",
+    "/sensing/lidar/points2",
+    "/sensing/radar/points",
+]
