@@ -6,7 +6,7 @@ from rich import print
 
 
 from pointcloudset import Dataset
-import config
+from . import config
 
 
 def extract(bag_file: Path, topics: list, verbose=False) -> None:
@@ -50,9 +50,7 @@ if __name__ == "__main__":
     import argparse
 
     # Create an ArgumentParser object
-    parser = argparse.ArgumentParser(
-        description="Process path to bagfile and topics to extract."
-    )
+    parser = argparse.ArgumentParser(description="Process path to bagfile and topics to extract.")
     # Add an argument to the parser
     parser.add_argument(
         "path",
