@@ -56,9 +56,7 @@ def register_custom_ros_msgs(path_to_msgs, verbose=False):
         )
 
     except ImportError:
-        print(
-            "Could not import custom message types. Please check your ROS installation."
-        )
+        print("Could not import custom message types. Please check your ROS installation.")
 
     if verbose:
         from pydoc import render_doc
@@ -116,14 +114,33 @@ def msg_decoder(msg):
 
             if field.endswith("_valid") and value == True:
                 measurement_name = field.rsplit("_", 1)[0]
-                msg_data[(msg_type, measurement_name)] = getattr(
-                    msg_content, measurement_name
-                )
+                msg_data[(msg_type, measurement_name)] = getattr(msg_content, measurement_name)
 
     return msg_data
 
 
-def load(bag_file, topic, path_to_custom_msgs=None):
+def _get_data(bag_file: Path, topic: str) -> list:
+    """WIP"""
+    data = []
+    with Reader(bag_file) as reader:
+        connections = [x for x in reader.connections if x.topic == topic]
+        i = 0
+        for connection, timestamp, rawdata in reader.messages(connections=connections):
+            data.append(rawdata)
+            i += 1
+            if i > 100:
+                break
+
+    return data
+
+
+def get_data_deserialized(
+    bag_file: Path,
+    topic: str,
+    path_to_custom_msgs: Path = None,
+    timestamp_source: str = "header",
+    has_header: bool = True,
+) -> dict:
     if path_to_custom_msgs:
         register_custom_ros_msgs(path_to_custom_msgs, verbose=False)
 
@@ -131,7 +148,7 @@ def load(bag_file, topic, path_to_custom_msgs=None):
 
     with Reader(bag_file) as reader:
         connections = [x for x in reader.connections if x.topic == topic]
-        for connection, timestamp, rawdata in reader.messages(connections=connections):
+        for connection, timestamp_msg, rawdata in reader.messages(connections=connections):
             try:
                 msg = deserialize_cdr(rawdata, connection.msgtype)
             except KeyError as e:
@@ -139,14 +156,26 @@ def load(bag_file, topic, path_to_custom_msgs=None):
                     f"Could not deserialize message: {e}. Include the path to the custom messages (path_to_custom_msgs)."
                 ) from e
             # print(msg.header.frame_id)
-            timestamp = pd.to_datetime(
-                msg.header.stamp.sec * 1e9 + msg.header.stamp.nanosec,
-                unit="ns",
-                origin="unix",
-            )
 
-            data[timestamp] = msg_decoder(msg)
+            if timestamp_source == "msg":
+                timestamp = timestamp_msg
+            if timestamp_source == "header":
+                timestamp = pd.to_datetime(
+                    msg.header.stamp.sec * 1e9 + msg.header.stamp.nanosec,
+                    unit="ns",
+                    origin="unix",
+                )
 
+            if has_header:
+                data[timestamp] = msg_decoder(msg)
+            else:
+                data[timestamp] = msg
+            break
+    return data
+
+
+def load(bag_file: Path, topic: str, path_to_custom_msgs: Path = None) -> pd.DataFrame:
+    data = get_data_deserialized(bag_file, topic, path_to_custom_msgs)
     return pd.DataFrame(data).T
 
 
