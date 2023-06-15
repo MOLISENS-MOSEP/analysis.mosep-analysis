@@ -48,14 +48,14 @@ def load_pointcloudset(
         rprint(f"Searching for pointcloudset files in {pointcloudset_path}")
 
     if not pointcloudset_path.exists():
-        rprint("No pointcloudset files found.")
+        rprint(f"No pointcloudset files found for topic {topic}.")
 
         if not bag_path.exists():
             raise FileNotFoundError(f"No pointcloudset files found and {bag_path} does not exist")
 
         if not safe_parquet:
             # Calculate on the fly
-            rprint("No pointcloudset files found. Loading bag file on the fly..")
+            rprint("Loading bag file on the fly..")
             dataset = Dataset.from_file(
                 bag_path,
                 topic=topic,
@@ -65,7 +65,7 @@ def load_pointcloudset(
                 print_stats(bag_path, dataset)
             return dataset
 
-        rprint("No pointcloudset files found. Creating them now..")
+        rprint("Creating pointcloudset files now..")
         extract_pcs_from_bagfile.extract(bag_path, [topic], verbose=verbose)
 
     dataset = Dataset.from_file(pointcloudset_path)
