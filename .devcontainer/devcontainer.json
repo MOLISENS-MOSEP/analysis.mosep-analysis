@@ -8,11 +8,12 @@
 		"source=/nas/data/raw/MOLISENSext/lufft_wsx_interfaces/msg,target=/workspaces/MOLISENSext_analysis/data/0external/lufft_wsx_interfaces/msg,type=bind,consistency=cached",
 		"source=/nas/data/raw/MOLISENSext/2023_04_14_bad_aussee/,target=/workspaces/MOLISENSext_analysis/data/1raw/bad_aussee,type=bind,consistency=cached",
 		"source=/datalocal/chg/MOLISENSext/2023_04_14_bad_aussee/,target=/workspaces/MOLISENSext_analysis/data/2interim/bad_aussee,type=bind,consistency=cached",
+		// "source=\\\\wsl.localhost\\Ubuntu-20.04\\home\\grisi\\projects\\MOLISENS\\ade\\MOLISENS\\bagfiles,target=/workspaces/molisensext_analysis/data/0external/ubuntu2004_bagfiles,type=bind,consistency=cached",
+		// "source=\\\\wsl.localhost\\Ubuntu-20.04\\home\\grisi\\projects\\MOLISENS\\ade\\MOLISENS\\molisens_ws\\src\\drivers\\lufft_weather_station\\lufft_wsx_interfaces\\msg,target=/workspaces/molisensext_analysis/data/0external/lufft_wsx_interfaces/msg,type=bind,consistency=cached"
 	],
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"ms-python.python",
 				"njpwerner.autodocstring",
 				"ms-azuretools.vscode-docker",
 				"mhutchie.git-graph",
@@ -22,7 +23,10 @@
 				"streetsidesoftware.code-spell-checker",
 				"oderwat.indent-rainbow",
 				"GitHub.vscode-pull-request-github",
-				"charliermarsh.ruff"
+				"charliermarsh.ruff",
+				"ms-python.python",
+				"ms-toolsai.jupyter",
+				"ms-python.black-formatter"
 			],
 			"settings": {
 				"python.formatting.provider": "black",
@@ -41,7 +45,10 @@
 				"cSpell.maxNumberOfProblems": 500,
 				"python.dataScience.alwaysTrustNotebooks": true,
 				"jupyter.alwaysTrustNotebooks": true,
-				"notebook.formatOnSave.enabled": true
+				"notebook.formatOnSave.enabled": true,
+				"files.watcherExclude": {
+					"**/data/*/**": true
+				}
 			},
 		},
 	},
