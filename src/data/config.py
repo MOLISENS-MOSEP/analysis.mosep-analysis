@@ -1,4 +1,7 @@
+from src.data.utils import Limits
+
 from pathlib import Path
+
 
 PROJECT_FOLDER = Path("/workspaces/MOLISENSext_analysis")
 DATA_FOLDER = Path.joinpath(PROJECT_FOLDER, "data")
@@ -18,3 +21,12 @@ PC_TOPICS = [
     "/sensing/lidar/points2",
     "/sensing/radar/points",
 ]
+
+TARGET_EXTENTS = [
+    #          xmin,  xmax,  ymin, ymax, zmin,  zmax
+    Limits(12.80, 13.60, 5.70, 7.20, -1.20, -0.70),
+    Limits(23.50, 23.90, 0.20, 1.80, -1.40, -0.90),
+    Limits(38.70, 39.60, 6.70, 9.40, -1.30, -0.70),
+]
+
+FIELDS = ["x", "y", "z", "intensity", "t", "reflectivity", "ring", "ambient", "range", "original_id"]

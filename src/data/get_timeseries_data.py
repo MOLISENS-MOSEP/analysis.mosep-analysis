@@ -158,7 +158,7 @@ def get_data_deserialized(
             # print(msg.header.frame_id)
 
             if timestamp_source == "msg":
-                timestamp = timestamp_msg
+                timestamp = pd.to_datetime(timestamp_msg, unit="ns", origin="unix")
             if timestamp_source == "header":
                 timestamp = pd.to_datetime(
                     msg.header.stamp.sec * 1e9 + msg.header.stamp.nanosec,
@@ -170,12 +170,16 @@ def get_data_deserialized(
                 data[timestamp] = msg_decoder(msg)
             else:
                 data[timestamp] = msg
-            break
     return data
 
 
-def load(bag_file: Path, topic: str, path_to_custom_msgs: Path = None) -> pd.DataFrame:
-    data = get_data_deserialized(bag_file, topic, path_to_custom_msgs)
+def load(
+    bag_file: Path,
+    topic: str,
+    path_to_custom_msgs: Path = None,
+    timestamp_source: str = "header",
+) -> pd.DataFrame:
+    data = get_data_deserialized(bag_file, topic, path_to_custom_msgs, timestamp_source=timestamp_source)
     return pd.DataFrame(data).T
 
 
@@ -184,7 +188,7 @@ if __name__ == "__main__":
     # list_topics_of_bagfile("/workspaces/MOLISENSext_analysis/data/1raw/bad_aussee/data/molisens_met_2023_04_14-09_23_34")
     # register_custom_ros_msgs(config.PATH_TO_LUFFT_MSGS, verbose=False)
     df = load(
-        "/workspaces/MOLISENSext_analysis/data/1raw/bad_aussee/data/molisens_met_2023_04_14-09_23_34",
+        "/workspaces/MOLISENSext_analysis/data/2interim/bad_aussee/data/molisens_met_2023_04_14-09_23_34_converted",
         "/sensing/aws/ws100_measurements",
         config.PATH_TO_LUFFT_MSGS,
     )

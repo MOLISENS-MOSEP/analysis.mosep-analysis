@@ -2,7 +2,9 @@ import numpy as np
 import plotly.graph_objects as go
 
 
-def get_cube(x_coords, y_coords, z_coords, color="red", opacity=0.6):
+def plot_cube(x_coords, y_coords, z_coords, color="red", opacity=0.6) -> go.Figure:
+    """Plot a go.Mesh3d object representing a cube."""
+
     return go.Mesh3d(
         # 8 vertices of a cube
         x=x_coords,
@@ -17,13 +19,13 @@ def get_cube(x_coords, y_coords, z_coords, color="red", opacity=0.6):
         color=color,
         flatshading=True,
         # Beautiful color but unnecessary.
-        colorscale=[[0, "gold"], [0.5, "mediumturquoise"], [1, "magenta"]],
-        intensity=np.linspace(0, 1, 12, endpoint=True),
-        intensitymode="cell",
-        showscale=False,
+        # colorscale=[[0, "gold"], [0.5, "mediumturquoise"], [1, "magenta"]],
+        # intensity=np.linspace(0, 1, 12, endpoint=True),
+        # intensitymode="cell",
+        # showscale=False,
     )
 
 
 if __name__ == "__main__":
-    fig = go.Figure(data=[get_cube()])
+    fig = go.Figure(data=[plot_cube()])
     fig.show()
