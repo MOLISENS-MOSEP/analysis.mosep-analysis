@@ -23,10 +23,10 @@ PC_TOPICS = [
 ]
 
 TARGET_EXTENTS = [
-    #          xmin,  xmax,  ymin, ymax, zmin,  zmax
-    Limits(12.80, 13.60, 5.70, 7.20, -1.20, -0.70),
-    Limits(23.50, 23.90, 0.20, 1.80, -1.40, -0.90),
-    Limits(38.70, 39.60, 6.70, 9.40, -1.30, -0.70),
+    #      xmin,  xmax,  ymin, ymax, zmin,  zmax,  rmin, rmax
+    Limits(12.80, 13.60, 5.70, 7.20, -1.20, -0.70, 14.5, 15.0),
+    Limits(23.50, 23.90, 0.20, 1.80, -1.40, -0.90, 23.6, 24.0),
+    Limits(38.70, 39.60, 6.70, 9.40, -1.30, -0.70, 39.8, 40.3),
 ]
 
 FIELDS = ["x", "y", "z", "intensity", "t", "reflectivity", "ring", "ambient", "range", "original_id"]

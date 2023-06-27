@@ -3,12 +3,14 @@ from pointcloudset import PointCloud
 
 
 class Limits(NamedTuple):
-    x_min: Union[float, None]
-    x_max: Union[float, None]
-    y_min: Union[float, None]
-    y_max: Union[float, None]
-    z_min: Union[float, None]
-    z_max: Union[float, None]
+    x_min: Union[float, None] = None
+    x_max: Union[float, None] = None
+    y_min: Union[float, None] = None
+    y_max: Union[float, None] = None
+    z_min: Union[float, None] = None
+    z_max: Union[float, None] = None
+    r_min: Union[float, None] = None
+    r_max: Union[float, None] = None
 
     def apply_limits(self, pc: PointCloud) -> PointCloud:
         """
@@ -20,17 +22,21 @@ class Limits(NamedTuple):
         Returns:
             PointCloud: A new PointCloud object with the limits applied.
         """
+
         x_min = float("-inf") if self.x_min is None else self.x_min
         x_max = float("inf") if self.x_max is None else self.x_max
         y_min = float("-inf") if self.y_min is None else self.y_min
         y_max = float("inf") if self.y_max is None else self.y_max
         z_min = float("-inf") if self.z_min is None else self.z_min
         z_max = float("inf") if self.z_max is None else self.z_max
+        r_min = float("-inf") if self.r_min is None else (self.r_min * 1e3)  # convert to m to mm
+        r_max = float("inf") if self.r_max is None else (self.r_max * 1e3)
 
         return (
             pc.limit(dim="x", minvalue=x_min, maxvalue=x_max)
             .limit(dim="y", minvalue=y_min, maxvalue=y_max)
             .limit(dim="z", minvalue=z_min, maxvalue=z_max)
+            .limit(dim="range", minvalue=r_min, maxvalue=r_max)
         )
 
     def get_vertices_from_limits(self, format: str = "xyz"):
@@ -73,3 +79,9 @@ class Limits(NamedTuple):
             return vertices
         else:
             raise ValueError("Format not supported.")
+
+
+if __name__ == "__main__":
+    limits = Limits(x_min=0, x_max=10, y_min=0, y_max=10, z_min=0, z_max=10)
+    print(limits.get_vertices_from_limits())
+    print(limits.get_vertices_from_limits(format="vertices"))
