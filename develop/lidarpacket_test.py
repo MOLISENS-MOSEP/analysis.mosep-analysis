@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 
 from ouster import client
 from ouster.client import LidarPacket, SensorInfo
-from ouster.client.data import ChanField, FieldDType, LidarScan, XYZLut, destagger
+from ouster.client.data import ChanField, FieldDType, LidarScan, XYZLut, destagger, PacketIdError
 from ouster.client.core import UDPProfileLidar, ClientTimeout, PacketSource, Packets
 
 from rosbags.rosbag2 import Reader
@@ -33,8 +33,8 @@ class ListPacketSource(PacketSource):
         self._metadata = value
 
 
-BAG_FILE = "data/1raw/bad_aussee/data/molisens_met_2023_04_14-09_23_34"
-METADATA_PATH = "data/1raw/bad_aussee/data/molisens_met_2023_04_14-09_23_34/ouster_metadata.txt"
+BAG_FILE = Path("/workspaces/molisensext_analysis/data/0external/ubuntu2004_bagfiles/molisens_met_2023_03_07-14_05_21")
+METADATA_PATH = BAG_FILE / "ouster_metadata.txt"
 
 
 def get_data(bag_file: Path, topic: str) -> list:
@@ -44,44 +44,11 @@ def get_data(bag_file: Path, topic: str) -> list:
         i = 0
         for connection, timestamp, rawdata in reader.messages(connections=connections):
             data.append(rawdata)
-            i += 1
-            if i > 40000:
-                break
+            # i += 1
+            # if i > 40000:
+            #     break
 
     return data
-
-
-with open(METADATA_PATH, "r") as f:
-    metadata = client.SensorInfo(f.read())
-
-
-fields = None
-
-# used to initialize LidarScan
-_fields = metadata.format.udp_profile_lidar
-
-
-w = metadata.format.columns_per_frame
-h = metadata.format.pixels_per_column
-packets_per_frame = w // metadata.format.columns_per_packet
-column_window = metadata.format.column_window
-
-
-ls_write = None
-pf = client._client.PacketFormat.from_info(metadata)
-
-batch = client._client.ScanBatcher(w, pf)
-
-packet_data = get_data(Path(BAG_FILE), "/sensing/lidar/lidar_packets")
-rprint(f"Done reading data. Got: {len(packet_data)} packets.")
-
-
-source = [LidarPacket(pd, info=metadata, _raise_on_id_check=False) for pd in packet_data]
-# source = ListPacketSource(source)
-# source.metadata = metadata
-# metadata.format.columns_per_frame = 483
-source = Packets(source, metadata)
-# print(source.metadata.format.columns_per_frame)
 
 
 class ScansFromBag:
@@ -163,19 +130,69 @@ class ScansFromBag:
                     ls_write = None
 
 
+
+with open(METADATA_PATH, "r") as f:
+    metadata = client.SensorInfo(f.read())
+
+
+fields = None
+
+# used to initialize LidarScan
+_fields = metadata.format.udp_profile_lidar
+
+
+w = metadata.format.columns_per_frame
+h = metadata.format.pixels_per_column
+packets_per_frame = w // metadata.format.columns_per_packet
+column_window = metadata.format.column_window
+
+
+ls_write = None
+pf = client._client.PacketFormat.from_info(metadata)
+
+batch = client._client.ScanBatcher(w, pf)
+
+packet_data = get_data(Path(BAG_FILE), "/sensing/lidar/lidar_packets")
+rprint(f"Done reading data. Got: {len(packet_data)} packets.")
+
+passed_packets = []
+source = []
+for pd in packet_data:
+    try:
+        source.append(LidarPacket(pd, info=metadata, _raise_on_id_check=True))
+    except ValueError:
+        passed_packets.append(len(pd))
+    except PacketIdError as e:
+        print(e)
+        
+rprint(passed_packets)
+
+
+# source = ListPacketSource(source)
+# source.metadata = metadata
+# metadata.format.columns_per_frame = 483
+source = Packets(source, metadata)
+# print(source.metadata.format.columns_per_frame)
+
 scans = ScansFromBag(source, complete=False)
 
 for scan in scans:
     # Process the lidar scan
 
     xyzlut = XYZLut(info=metadata)
+    
+    if xyzlut(scan).sum() > 0:
+        pass
+    
     destaggered_cartisian = destagger(info=metadata, fields=xyzlut(scan))
 
-    print(destaggered_cartisian.shape)
+    # rprint(destaggered_cartisian.shape)
 
-    # plt.imshow(destaggered_cartisian[:, :, 0], interpolation="nearest")
-    # plt.show()
 
+plt.imshow(xyzlut(scan)[:, :, 1], interpolation="nearest")
+plt.show()
+
+    # break
 
 # for pd in packet_data:
 #     # with warnings.catch_warnings(record=True):
