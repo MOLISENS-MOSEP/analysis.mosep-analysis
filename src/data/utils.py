@@ -1,14 +1,17 @@
 from typing import NamedTuple, Union
 from pointcloudset import PointCloud
+from bisect import bisect_left, bisect_right
 
 
 class Limits(NamedTuple):
-    x_min: Union[float, None]
-    x_max: Union[float, None]
-    y_min: Union[float, None]
-    y_max: Union[float, None]
-    z_min: Union[float, None]
-    z_max: Union[float, None]
+    x_min: Union[float, None] = None
+    x_max: Union[float, None] = None
+    y_min: Union[float, None] = None
+    y_max: Union[float, None] = None
+    z_min: Union[float, None] = None
+    z_max: Union[float, None] = None
+    r_min: Union[float, None] = None
+    r_max: Union[float, None] = None
 
     def apply_limits(self, pc: PointCloud) -> PointCloud:
         """
@@ -20,17 +23,21 @@ class Limits(NamedTuple):
         Returns:
             PointCloud: A new PointCloud object with the limits applied.
         """
+
         x_min = float("-inf") if self.x_min is None else self.x_min
         x_max = float("inf") if self.x_max is None else self.x_max
         y_min = float("-inf") if self.y_min is None else self.y_min
         y_max = float("inf") if self.y_max is None else self.y_max
         z_min = float("-inf") if self.z_min is None else self.z_min
         z_max = float("inf") if self.z_max is None else self.z_max
+        r_min = float("-inf") if self.r_min is None else (self.r_min * 1e3)  # convert to m to mm
+        r_max = float("inf") if self.r_max is None else (self.r_max * 1e3)
 
         return (
             pc.limit(dim="x", minvalue=x_min, maxvalue=x_max)
             .limit(dim="y", minvalue=y_min, maxvalue=y_max)
             .limit(dim="z", minvalue=z_min, maxvalue=z_max)
+            .limit(dim="range", minvalue=r_min, maxvalue=r_max)
         )
 
     def get_vertices_from_limits(self, format: str = "xyz"):
@@ -73,3 +80,59 @@ class Limits(NamedTuple):
             return vertices
         else:
             raise ValueError("Format not supported.")
+
+
+def take_closest(sorted_list, value, get_index=False, position="left"):
+    """
+    Returns the closest value to `value` in a sorted list.
+
+    If two numbers are equally close, return the smaller number (position="left") or the bigger number
+    (position="right").
+
+    Args:
+        sorted_list (List[Union[int, float]]): A sorted list of integers or floats.
+        value (Union[int, float]): The value to find the closest match for.
+        get_index (bool, optional): If True, return the index of the closest value instead of the value itself.
+            Defaults to False.
+        position (str, optional): The position of the closest value to return. Can be "left" or "right".
+            Defaults to "left".
+
+    Returns:
+        Union[int, float, int]: The closest value to `value` in `sorted_list`, or its index if `get_index` is True.
+
+    Raises:
+        ValueError: If `sorted_list` is empty.
+
+    Examples:
+        >>> take_closest([1, 2, 3, 4, 5], 3.6)
+        4
+        >>> take_closest([1, 2, 3, 4, 5], 3.6, get_index=True)
+        3
+    """
+    if position == "left":
+        pos = bisect_left(sorted_list, value)
+    elif position == "right":
+        pos = bisect_right(sorted_list, value)
+
+    if get_index:
+        return pos
+    if pos == 0:
+        return sorted_list[0]
+    if pos == len(sorted_list):
+        return sorted_list[-1]
+    before = sorted_list[pos - 1]
+    after = sorted_list[pos]
+    if after - value < value - before:
+        return after
+    else:
+        return before
+
+
+def take_closest_unsorted(unsorted_list, value):
+    return min(unsorted_list, key=lambda x: abs(x - value))
+
+
+if __name__ == "__main__":
+    limits = Limits(x_min=0, x_max=10, y_min=0, y_max=10, z_min=0, z_max=10)
+    print(limits.get_vertices_from_limits())
+    print(limits.get_vertices_from_limits(format="vertices"))

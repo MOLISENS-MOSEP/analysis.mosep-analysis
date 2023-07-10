@@ -11,10 +11,10 @@ from src.data import extract_pcs_from_bagfile
 
 def print_stats(bag_path, dataset):
     rprint(f"Dataset loaded from {bag_path}")
-    rprint(f"start = {dataset.start_time}")
-    rprint(f"end =   {dataset.end_time}")
-    rprint(f"end =   {dataset.duration}")
-    rprint(f"length =  {len(dataset)}")
+    rprint(f"start =    {dataset.start_time}")
+    rprint(f"end =      {dataset.end_time}")
+    rprint(f"duration = {dataset.duration}")
+    rprint(f"length =   {len(dataset)}")
     freq = len(dataset) / (dataset.duration.seconds + dataset.duration.microseconds / 1e6)
     rprint(f"avg frequency =  {freq :.2f} Hz")
 
