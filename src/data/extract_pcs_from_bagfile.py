@@ -9,7 +9,7 @@ from pointcloudset import Dataset
 from . import config
 
 
-def extract(bag_file: Path, topics: list, verbose=False) -> None:
+def extract(bag_file: Path, topics: list, verbose: bool = False) -> None:
     """
     Extracts point clouds from a ROS bag file.
 
