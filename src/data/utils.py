@@ -1,5 +1,6 @@
 from typing import NamedTuple, Union
 from pointcloudset import PointCloud
+from bisect import bisect_left, bisect_right
 
 
 class Limits(NamedTuple):
@@ -79,6 +80,56 @@ class Limits(NamedTuple):
             return vertices
         else:
             raise ValueError("Format not supported.")
+
+
+def take_closest(sorted_list, value, get_index=False, position="left"):
+    """
+    Returns the closest value to `value` in a sorted list.
+
+    If two numbers are equally close, return the smaller number (position="left") or the bigger number
+    (position="right").
+
+    Args:
+        sorted_list (List[Union[int, float]]): A sorted list of integers or floats.
+        value (Union[int, float]): The value to find the closest match for.
+        get_index (bool, optional): If True, return the index of the closest value instead of the value itself.
+            Defaults to False.
+        position (str, optional): The position of the closest value to return. Can be "left" or "right".
+            Defaults to "left".
+
+    Returns:
+        Union[int, float, int]: The closest value to `value` in `sorted_list`, or its index if `get_index` is True.
+
+    Raises:
+        ValueError: If `sorted_list` is empty.
+
+    Examples:
+        >>> take_closest([1, 2, 3, 4, 5], 3.6)
+        4
+        >>> take_closest([1, 2, 3, 4, 5], 3.6, get_index=True)
+        3
+    """
+    if position == "left":
+        pos = bisect_left(sorted_list, value)
+    elif position == "right":
+        pos = bisect_right(sorted_list, value)
+
+    if get_index:
+        return pos
+    if pos == 0:
+        return sorted_list[0]
+    if pos == len(sorted_list):
+        return sorted_list[-1]
+    before = sorted_list[pos - 1]
+    after = sorted_list[pos]
+    if after - value < value - before:
+        return after
+    else:
+        return before
+
+
+def take_closest_unsorted(unsorted_list, value):
+    return min(unsorted_list, key=lambda x: abs(x - value))
 
 
 if __name__ == "__main__":
