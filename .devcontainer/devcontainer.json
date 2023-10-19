@@ -5,15 +5,18 @@
 	"context": "..",
 	"dockerFile": "Dockerfile",
 	"mounts": [
-		"source=/nas/data/raw/MOLISENSext/lufft_wsx_interfaces/msg,target=/workspaces/MOLISENSext_analysis/data/0external/lufft_wsx_interfaces/msg,type=bind,consistency=cached",
-		"source=/nas/data/raw/MOLISENSext/2023_04_14_bad_aussee/,target=/workspaces/MOLISENSext_analysis/data/1raw/bad_aussee,type=bind,consistency=cached",
-		"source=/datalocal/chg/MOLISENSext/2023_04_14_bad_aussee/,target=/workspaces/MOLISENSext_analysis/data/2interim/bad_aussee,type=bind,consistency=cached",
-		// "source=\\\\wsl.localhost\\Ubuntu-20.04\\home\\grisi\\projects\\MOLISENS\\ade\\MOLISENS\\bagfiles,target=/workspaces/molisensext_analysis/data/0external/ubuntu2004_bagfiles,type=bind,consistency=cached",
-		// "source=\\\\wsl.localhost\\Ubuntu-20.04\\home\\grisi\\projects\\MOLISENS\\ade\\MOLISENS\\molisens_ws\\src\\drivers\\lufft_weather_station\\lufft_wsx_interfaces\\msg,target=/workspaces/molisensext_analysis/data/0external/lufft_wsx_interfaces/msg,type=bind,consistency=cached"
+		// "source=/nas/data/raw/MOLISENSext/lufft_wsx_interfaces/msg,target=/workspaces/MOLISENSext_analysis/data/0external/lufft_wsx_interfaces/msg,type=bind,consistency=cached",
+		// "source=/nas/data/raw/MOLISENSext/2023_04_14_bad_aussee/,target=/workspaces/MOLISENSext_analysis/data/1raw/bad_aussee,type=bind,consistency=cached",
+		// "source=/datalocal/chg/MOLISENSext/2023_04_14_bad_aussee/,target=/workspaces/MOLISENSext_analysis/data/2interim/bad_aussee,type=bind,consistency=cached",
+		"source=\\\\wsl.localhost\\Ubuntu-20.04\\home\\grisi\\projects\\MOLISENS\\ade\\MOLISENS\\molisens_ws\\src\\drivers\\lufft_weather_station\\lufft_wsx_interfaces\\msg,target=/workspaces/molisensext_analysis/data/0external/lufft_wsx_interfaces/msg,type=bind,consistency=cached",
+		"source=\\\\wsl.localhost\\Ubuntu-20.04\\home\\grisi\\projects\\MOLISENS\\ade\\MOLISENS\\bagfiles,target=/workspaces/molisensext_analysis/data/2interim/ubuntu2004_bagfiles,type=bind,consistency=cached",
+		"source=//c/datasets,target=/workspaces/molisensext_analysis/data/1raw/datasets,type=bind,consistency=cached",
+		"source=//c/Users/chris/OneDrive - Universität Graz/share/2023-10-05_Digitrans/1raw,target=/workspaces/molisensext_analysis/data/1raw/digitrans,type=bind,consistency=cached"
 	],
 	"customizations": {
 		"vscode": {
 			"extensions": [
+				"ms-toolsai.jupyter",
 				"njpwerner.autodocstring",
 				"ms-azuretools.vscode-docker",
 				"mhutchie.git-graph",
@@ -23,24 +26,24 @@
 				"streetsidesoftware.code-spell-checker",
 				"oderwat.indent-rainbow",
 				"GitHub.vscode-pull-request-github",
-				"charliermarsh.ruff",
 				"ms-python.python",
-				"ms-toolsai.jupyter",
-				"ms-python.black-formatter"
+				"charliermarsh.ruff",
+				"ms-python.black-formatter",
+				"ms-python.pylint"
 			],
 			"settings": {
-				"python.formatting.provider": "black",
+				"python.formatting.black": true,
 				"editor.formatOnSave": true,
 				"[latex]": {
 					"editor.wordWrap": "on",
 					"editor.formatOnSave": false,
 				},
 				"python.pythonPath": "/opt/conda/bin/python",
-				"python.linting.mypyEnabled": true,
-				"python.linting.enabled": true,
-				"python.linting.flake8Enabled": false,
+				"python.linting.mypy": true,
+				// "python.linting.enabled": true,
+				"python.linting.flake8": false,
 				"python.defaultInterpreterPath": "/opt/conda/bin/python",
-				"python.linting.pylintEnabled": false,
+				"python.linting.pylint": false,
 				"autoDocstring.docstringFormat": "google",
 				"cSpell.maxNumberOfProblems": 500,
 				"python.dataScience.alwaysTrustNotebooks": true,

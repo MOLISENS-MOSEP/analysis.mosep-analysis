@@ -13,8 +13,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 
 # Add python packages to the environment.yml file and uncommend here
-# COPY .devcontainer/environment.yml /tmp/environment.yml
-# RUN conda env update --file /tmp/environment.yml
+COPY .devcontainer/environment.yml /tmp/environment.yml
+RUN conda env update --file /tmp/environment.yml
 
 # Switch back to dialog for any ad-hoc use of apt-get
 ENV DEBIAN_FRONTEND=""

@@ -3,6 +3,8 @@ channels:
   - defaults
 dependencies:
   # - pytorch
-  panel
+  - panel
   - pip:
       - ouster-sdk
+      - tabulate
+      - python-frontmatter
