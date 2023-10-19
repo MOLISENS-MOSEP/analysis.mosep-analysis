@@ -64,32 +64,41 @@ def register_custom_ros_msgs(path_to_msgs, verbose=False):
         rprint(render_doc(LufftWSXXX))
 
 
-def list_topics_of_bagfile(bag_file):
+def get_topics_of_bagfile(bag_file, verbose=True):
     # Crete output table
     table = Table(title="Content of bag file")
     table.add_column("Topic", style="cyan")
     table.add_column("MSG", style="magenta")
 
     # create reader instance and open for reading
-    topics = []
+    metadata = {}
     with Reader(bag_file) as reader:
         # topic and msgtype information is available on .connections list
+        metadata["topics"] = {}
         for connection in reader.connections:
-            topics.append(connection.topic)
-
             table.add_row(connection.topic, connection.msgtype)
-            # print(f'{reader.compression_format=}')
-            # print(f'{reader.compression_mode=}')
-            # print(f'{reader.custom_data=}')
-            # print(f'{reader.start_time=}')
-            # print(f'{reader.end_time=}')
-            # print(f'{reader.duration=}')
-            # print(f'{reader.files=}')
-            # print(f'{reader.message_count=}')
-            # print(f'{reader.metadata=}')
-            # print(f'{reader.topics=}')
+            metadata["topics"][connection.topic] = str(connection.msgtype)
 
-    rprint(table)
+        metadata["compression_format"] = reader.compression_format
+        metadata["compression_mode"] = reader.compression_mode
+        metadata["custom_data"] = reader.custom_data
+        metadata["start_time"] = pd.to_datetime(reader.start_time, unit="ns", origin="unix")
+        metadata["end_time"] = pd.to_datetime(reader.end_time, unit="ns", origin="unix")
+        metadata["duration"] = pd.to_timedelta(reader.duration, unit="ns")
+        # metadata["files"] = reader.files
+        metadata["message_count"] = {}
+        metadata["message_count"]["total"] = reader.message_count
+        # This is simply the content of the metadata.yaml file
+        # Could be used for restoring the metadata.yaml file but not needed here.
+        # metadata["metadata"] = reader.metadata
+
+        for topic in reader.metadata["topics_with_message_count"]:
+            metadata["message_count"][topic["topic_metadata"]["name"]] = topic["message_count"]
+
+    if verbose:
+        rprint(table)
+
+    return metadata
 
 
 def msg_decoder(msg):
@@ -185,10 +194,13 @@ def load(
 
 if __name__ == "__main__":
     # print(list(Path(config.PATH_TO_LUFFT_MSGS).glob("**/*")))
-    # list_topics_of_bagfile("/workspaces/MOLISENSext_analysis/data/1raw/bad_aussee/data/molisens_met_2023_04_14-09_23_34")
+    get_topics_of_bagfile(
+        "/workspaces/molisensext_analysis/data/0external/ubuntu2004_bagfiles/molisens_met_2023_03_07-14_05_21_converted"
+    )
     # register_custom_ros_msgs(config.PATH_TO_LUFFT_MSGS, verbose=False)
     df = load(
-        "/workspaces/MOLISENSext_analysis/data/2interim/bad_aussee/data/molisens_met_2023_04_14-09_23_34_converted",
+        "/workspaces/molisensext_analysis/data/0external/ubuntu2004_bagfiles/molisens_met_2023_03_07-14_05_21_converted",
+        # "/workspaces/MOLISENSext_analysis/data/2interim/bad_aussee/data/molisens_met_2023_04_14-09_23_34_converted",
         "/sensing/aws/ws100_measurements",
         config.PATH_TO_LUFFT_MSGS,
     )

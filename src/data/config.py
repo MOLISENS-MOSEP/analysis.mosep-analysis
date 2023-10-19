@@ -3,7 +3,8 @@ from src.data.utils import Limits
 from pathlib import Path
 
 
-PROJECT_FOLDER = Path("/workspaces/MOLISENSext_analysis")
+# PROJECT_FOLDER = Path("/workspaces/MOLISENSext_analysis")
+PROJECT_FOLDER = Path("/workspaces/molisensext_analysis")
 DATA_FOLDER = Path.joinpath(PROJECT_FOLDER, "data")
 
 FIGURE_FOLDER = Path.joinpath(PROJECT_FOLDER, "reports").joinpath("figures")
