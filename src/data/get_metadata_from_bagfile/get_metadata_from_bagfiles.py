@@ -16,6 +16,8 @@ from src.tools.fix_ros2_metadata_file import fix_timestamp_order
 from src.data import get_timeseries_data
 
 
+# TODO It seems that this script only extracts the meta from the first bag file of a multi file bag file.
+
 # * Note that multiple metadata concepts appear in this script.
 # * First, there is the metadata that is extracted from the bagfile itself in this script containing the met data.
 # * Second, there is the metadata file that is created by ROS2 when a bagfile is recorded.
@@ -174,7 +176,7 @@ def create_overview_table(
     metadata_df = pd.DataFrame(metadata_list).sort_values(by=sort_by, ascending=ascending)
 
     # Convert the DataFrame to a Markdown table
-    table_str = metadata_df.to_markdown(index=False)
+    table_str = metadata_df.to_markdown(index=True)
 
     return table_str
 
@@ -240,7 +242,7 @@ def main(
         table = create_overview_table(
             output_paths, sort_by=["precipitation_intensity_hour.max", "start_time"], ascending=[False, True]
         )
-        with open(path / "overview.md", "w") as f:
+        with open(path / "met_overview_table.md", "w") as f:
             f.write(table)
 
 
