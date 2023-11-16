@@ -4,10 +4,10 @@
 	"name": "molisensext_analysis",
 	"context": "..",
 	"dockerFile": "Dockerfile",
-	"runArgs": [
-		"--env-file",
-		"${localWorkspaceFolder}/.devcontainer/.env"
-	],
+	// "runArgs": [
+	// 	"--env-file",
+	// 	"${localWorkspaceFolder}/.devcontainer/.env"
+	// ],
 	"mounts": [
 		// Uncomment and change the following lines to mount a directory from your local machine into the container.
 		// External data:
