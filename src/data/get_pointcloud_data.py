@@ -10,13 +10,13 @@ from src.data import extract_pcs_from_bagfile
 
 
 def print_stats(bag_path, dataset):
-    rprint(f"Dataset loaded from {bag_path}")
-    rprint(f"start =    {dataset.start_time}")
-    rprint(f"end =      {dataset.end_time}")
-    rprint(f"duration = {dataset.duration}")
-    rprint(f"length =   {len(dataset)}")
+    print(f"Dataset loaded from:\n{bag_path}")
+    print(f"start =    {dataset.start_time}")
+    print(f"end =      {dataset.end_time}")
+    print(f"duration = {dataset.duration}")
+    print(f"length =   {len(dataset)}")
     freq = len(dataset) / (dataset.duration.seconds + dataset.duration.microseconds / 1e6)
-    rprint(f"avg frequency =  {freq :.2f} Hz")
+    print(f"avg frequency =  {freq :.2f} Hz")
 
 
 def load_pointcloudset(
@@ -45,17 +45,17 @@ def load_pointcloudset(
 
     pointcloudset_path = data_dir / "pointcloudset" / topic[1:].replace("/", "_") / bag_name
     if verbose:
-        rprint(f"Searching for pointcloudset files in {pointcloudset_path}")
+        rprint(f"Searching for pointcloudset files in:\n{pointcloudset_path}")
 
     if not pointcloudset_path.exists():
-        rprint(f"No pointcloudset files found for topic {topic}.")
+        print(f"No pointcloudset files found for topic: {topic}.")
 
         if not bag_path.exists():
             raise FileNotFoundError(f"No pointcloudset files found and {bag_path} does not exist")
 
         if not safe_parquet:
             # Calculate on the fly
-            rprint("Loading bag file on the fly..")
+            print("Loading bag file on the fly..")
             dataset = Dataset.from_file(
                 bag_path,
                 topic=topic,
@@ -70,7 +70,7 @@ def load_pointcloudset(
 
     dataset = Dataset.from_file(pointcloudset_path)
     if verbose:
-        print_stats(bag_path, dataset)
+        print_stats(pointcloudset_path, dataset)
     return dataset
 
 
