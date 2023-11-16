@@ -4,15 +4,20 @@
 	"name": "molisensext_analysis",
 	"context": "..",
 	"dockerFile": "Dockerfile",
+	"runArgs": [
+		"--env-file",
+		"${localWorkspaceFolder}/.devcontainer/.env"
+	],
 	"mounts": [
-		// "source=/nas/data/raw/MOLISENSext/lufft_wsx_interfaces/msg,target=/workspaces/MOLISENSext_analysis/data/0external/lufft_wsx_interfaces/msg,type=bind,consistency=cached",
-		// "source=/nas/data/raw/MOLISENSext/2023_04_14_bad_aussee/,target=/workspaces/MOLISENSext_analysis/data/1raw/bad_aussee,type=bind,consistency=cached",
-		// "source=/datalocal/chg/MOLISENSext/2023_04_14_bad_aussee/,target=/workspaces/MOLISENSext_analysis/data/2interim/bad_aussee,type=bind,consistency=cached",
-		"source=\\\\wsl.localhost\\Ubuntu-20.04\\home\\grisi\\projects\\MOLISENS\\ade\\MOLISENS\\molisens_ws\\src\\drivers\\lufft_weather_station\\lufft_wsx_interfaces\\msg,target=/workspaces/molisensext_analysis/data/0external/lufft_wsx_interfaces/msg,type=bind,consistency=cached",
-		"source=\\\\wsl.localhost\\Ubuntu-20.04\\home\\grisi\\projects\\MOLISENS\\ade\\MOLISENS\\bagfiles,target=/workspaces/molisensext_analysis/data/2interim/ubuntu2004_bagfiles,type=bind,consistency=cached",
-		"source=//c/datasets,target=/workspaces/molisensext_analysis/data/1raw/datasets,type=bind,consistency=cached",
-		"source=//c/Users/chris/OneDrive - Universität Graz/share/2023-10-05_Digitrans/1raw,target=/workspaces/molisensext_analysis/data/1raw/digitrans,type=bind,consistency=cached",
-		"source=//e/data/2023-08-29_ViF_roof/01_raw,target=/workspaces/molisensext_analysis/data/1raw/vifroof,type=bind,consistency=cached"
+		// Uncomment and change the following lines to mount a directory from your local machine into the container.
+		// External data:
+		// "source=/path/to/external/data,target=/workspaces/MOLISENSext_analysis/data/0external,type=bind,consistency=cached",
+		// Raw data:
+		// "source=/path/to/raw/data,target=/workspaces/MOLISENSext_analysis/data/1raw,type=bind,consistency=cached",
+		// Interim data:
+		// "source=/path/to/interim/data,target=/workspaces/MOLISENSext_analysis/data/2interim,type=bind,consistency=cached",
+		// Processed data:
+		// "source=/path/to/processed/data,target=/workspaces/MOLISENSext_analysis/data/3external,type=bind,consistency=cached"
 	],
 	"customizations": {
 		"vscode": {
