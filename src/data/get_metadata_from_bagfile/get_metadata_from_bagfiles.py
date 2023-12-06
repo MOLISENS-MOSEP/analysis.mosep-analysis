@@ -16,12 +16,22 @@ from src.tools.fix_ros2_metadata_file import fix_timestamp_order
 from src.data import get_timeseries_data
 
 
-# TODO It seems that this script only extracts the meta from the first bag file of a multi file bag file.
+# * Note that multiple metadata concepts appear in this script:
+# * - First, there is the metadata that is extracted from the bagfile itself in this script containing the met data.
+# * - Second, there is the metadata file that is created by ROS2 when a bagfile is recorded.
+# * - Third, the Ouster sensor has its own metadata file that is stored in the bagfile usually named: ouster_metadata.txt.
 
-# * Note that multiple metadata concepts appear in this script.
-# * First, there is the metadata that is extracted from the bagfile itself in this script containing the met data.
-# * Second, there is the metadata file that is created by ROS2 when a bagfile is recorded.
-# * Third, the Ouster sensor has its own metadata file that is stored in the bagfile usually named: ouster_metadata.txt.
+
+def get_total_mcap_size(directory):
+    directory_path = Path(directory)
+    total_size = sum(f.stat().st_size for f in directory_path.glob("*.mcap"))
+
+    if total_size >= 1024 * 1024 * 1024:  # size is in GB
+        return f"{total_size / (1024 * 1024 * 1024):.2f} GB"
+    elif total_size >= 1024 * 1024:  # size is in MB
+        return f"{total_size / (1024 * 1024):.2f} MB"
+    else:  # size is in bytes
+        return f"{total_size} bytes"
 
 
 def extract_metadata(bag_path: Union[str, Path]) -> Tuple[dict, plt.Figure]:
@@ -42,7 +52,7 @@ def extract_metadata(bag_path: Union[str, Path]) -> Tuple[dict, plt.Figure]:
     """
 
     bag_path = Path(bag_path)
-    meta = {"note_type": "measurement"}
+    meta = {"note_type": "measurement", "bag_size": get_total_mcap_size(bag_path)}
 
     df = get_timeseries_data.load(bag_path, "/sensing/aws/ws100_measurements", config.PATH_TO_LUFFT_MSGS)
     precip_stats = {
@@ -168,6 +178,7 @@ def create_overview_table(
                 "precipitation_intensity_hour.max": post.metadata["precipitation_intensity_hour"]["max"],
                 "start_time": pd.to_datetime(post.metadata["start_time"]),
                 "duration": pd.Timedelta(post.metadata["duration"]),
+                "bag_size": post.metadata["bag_size"],
                 "comment": post.metadata["comment"],
             }
         )
