@@ -195,11 +195,11 @@ def load(
 if __name__ == "__main__":
     # print(list(Path(config.PATH_TO_LUFFT_MSGS).glob("**/*")))
     get_topics_of_bagfile(
-        "/workspaces/molisensext_analysis/data/0external/ubuntu2004_bagfiles/molisens_met_2023_03_07-14_05_21_converted"
+        "/workspaces/MOLISENSext_analysis/data/0external/ubuntu2004_bagfiles/molisens_met_2023_03_07-14_05_21_converted"
     )
     # register_custom_ros_msgs(config.PATH_TO_LUFFT_MSGS, verbose=False)
     df = load(
-        "/workspaces/molisensext_analysis/data/0external/ubuntu2004_bagfiles/molisens_met_2023_03_07-14_05_21_converted",
+        "/workspaces/MOLISENSext_analysis/data/0external/ubuntu2004_bagfiles/molisens_met_2023_03_07-14_05_21_converted",
         # "/workspaces/MOLISENSext_analysis/data/2interim/bad_aussee/data/molisens_met_2023_04_14-09_23_34_converted",
         "/sensing/aws/ws100_measurements",
         config.PATH_TO_LUFFT_MSGS,

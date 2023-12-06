@@ -8,7 +8,7 @@ from pathlib import Path
 
 dataset = Dataset.from_file(
     Path(
-        "/workspaces/molisensext_analysis/data/0external/ubuntu2004_bagfiles/molisens_met_2023_04_14-09_23_34_wrong_time"
+        "/workspaces/MOLISENSext_analysis/data/0external/ubuntu2004_bagfiles/molisens_met_2023_04_14-09_23_34_wrong_time"
     ),
     topic="/sensing/lidar/points",
     keep_zeros=False,

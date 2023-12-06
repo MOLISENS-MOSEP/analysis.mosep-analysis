@@ -15,7 +15,7 @@ def guess_msgtype(path: Path) -> str:
 
 add_types = {}
 
-for pathstr in Path("/workspaces/molisensext_analysis/data/0external/lufft_wsx_interfaces/msg").glob('**/*'):
+for pathstr in Path("/workspaces/MOLISENSext_analysis/data/0external/lufft_wsx_interfaces/msg").glob('**/*'):
     msgpath = Path(pathstr)
     msgdef = msgpath.read_text(encoding="utf-8")
     add_types.update(get_types_from_msg(msgdef, guess_msgtype(msgpath)))
@@ -40,7 +40,7 @@ from rosbags.serde import deserialize_cdr
 
 # create reader instance and open for reading
 with Reader(
-    "/workspaces/molisensext_analysis/data/0external/ubuntu2004_bagfiles/molisens_met_2023_04_14-09_23_34_convert_time"
+    "/workspaces/MOLISENSext_analysis/data/0external/ubuntu2004_bagfiles/molisens_met_2023_04_14-09_23_34_convert_time"
 ) as reader:
     # topic and msgtype information is available on .connections list
     for connection in reader.connections:
@@ -83,7 +83,7 @@ from rosbags.highlevel import AnyReader
 with AnyReader(
     [
         Path(
-            "/workspaces/molisensext_analysis/data/1raw/molisens_met_2023_03_27-12_33_46_converted_2"
+            "/workspaces/MOLISENSext_analysis/data/1raw/molisens_met_2023_03_27-12_33_46_converted_2"
         )
     ]
 ) as reader:

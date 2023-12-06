@@ -108,7 +108,7 @@ class ScansFromBag:
 
 
 def main():
-    BAG_FILE = Path("/workspaces/molisensext_analysis/data/0external/ubuntu2004_bagfiles/lidar_packets_test_file")
+    BAG_FILE = Path("/workspaces/MOLISENSext_analysis/data/0external/ubuntu2004_bagfiles/lidar_packets_test_file")
     METADATA = BAG_FILE / "ouster_metadata.txt"
     LIDAR_TOPIC = "/sensing/lidar_top/lidar_packets"
 
