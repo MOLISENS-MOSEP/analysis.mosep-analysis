@@ -189,7 +189,11 @@ def load(
     timestamp_source: str = "header",
 ) -> pd.DataFrame:
     data = get_data_deserialized(bag_file, topic, path_to_custom_msgs, timestamp_source=timestamp_source)
-    return pd.DataFrame(data).T
+    df = pd.DataFrame(data).T
+    # Add level names for columns and rows
+    df.columns.names = ["Catgegory", "Parameter"]
+    df.index.names = ["Timestamp"]
+    return df
 
 
 if __name__ == "__main__":

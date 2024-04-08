@@ -1,27 +1,28 @@
 // For format details, see https://aka.ms/vscode-remote/devcontainer.json or the definition README at
 // https://github.com/microsoft/vscode-dev-containers/tree/master/containers/python-3-miniconda
 {
-	"name": "molisensext_analysis",
+	"name": "MOLISENSext_analysis",
 	"context": "..",
 	"dockerFile": "Dockerfile",
-	// "runArgs": [
-	// 	"--env-file",
-	// 	"${localWorkspaceFolder}/.devcontainer/.env"
-	// ],
+	"runArgs": [
+		"--env-file",
+		"${localWorkspaceFolder}/.devcontainer/.env"
+	],
 	"mounts": [
 		// Uncomment and change the following lines to mount a directory from your local machine into the container.
 		// External data:
 		// "source=/path/to/external/data,target=/workspaces/MOLISENSext_analysis/data/0external,type=bind,consistency=cached",
 		// Raw data:
-		// "source=/path/to/raw/data,target=/workspaces/MOLISENSext_analysis/data/1raw,type=bind,consistency=cached",
+		"source=/nas/data/raw/MOLISENSext,target=/workspaces/MOLISENSext_analysis/data/1raw,type=bind,consistency=cached",
 		// Interim data:
-		// "source=/path/to/interim/data,target=/workspaces/MOLISENSext_analysis/data/2interim,type=bind,consistency=cached",
+		"source=/datalocal/chg/MOLISENSext,target=/workspaces/MOLISENSext_analysis/data/2interim,type=bind,consistency=cached",
 		// Processed data:
-		// "source=/path/to/processed/data,target=/workspaces/MOLISENSext_analysis/data/3external,type=bind,consistency=cached"
+		"source=/nas/data/processed/MOLISENSext,target=/workspaces/MOLISENSext_analysis/data/3processed,type=bind,consistency=cached"
 	],
 	"customizations": {
 		"vscode": {
 			"extensions": [
+				"ms-python.python",
 				"ms-toolsai.jupyter",
 				"njpwerner.autodocstring",
 				"ms-azuretools.vscode-docker",
@@ -32,7 +33,6 @@
 				"streetsidesoftware.code-spell-checker",
 				"oderwat.indent-rainbow",
 				"GitHub.vscode-pull-request-github",
-				"ms-python.python",
 				"charliermarsh.ruff",
 				"ms-python.black-formatter",
 				"ms-python.pylint"
