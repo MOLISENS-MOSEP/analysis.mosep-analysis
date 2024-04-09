@@ -17,7 +17,7 @@
 		// Interim data:
 		"source=/datalocal/chg/MOLISENSext,target=/workspaces/MOLISENSext_analysis/data/2interim,type=bind,consistency=cached",
 		// Processed data:
-		"source=/nas/data/processed/MOLISENSext,target=/workspaces/MOLISENSext_analysis/data/3processed,type=bind,consistency=cached"
+		"source=/datalocal/chg/MOLISENSext/processed,target=/workspaces/MOLISENSext_analysis/data/3processed,type=bind,consistency=cached"
 	],
 	"customizations": {
 		"vscode": {
