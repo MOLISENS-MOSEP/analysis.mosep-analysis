@@ -5,6 +5,7 @@ dependencies:
   # - pytorch
   - panel
   - pip:
+      - pointcloudset==0.9.0
       - ouster-sdk
       - tabulate
       - python-frontmatter
