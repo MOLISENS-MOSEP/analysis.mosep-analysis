@@ -2,7 +2,7 @@
 
 # from src.data import config
 
-from pointcloudset import Dataset
+from pointcloudset import Dataset, PointCloud
 from pathlib import Path
 from rich import print as rprint
 
@@ -20,7 +20,13 @@ def print_stats(bag_path, dataset):
 
 
 def load_pointcloudset(
-    data_dir: Path, bag_name: str, topic: str, safe_parquet: bool = True, keep_zeros: bool = False, verbose=False
+    data_dir: Path,
+    bag_name: str,
+    topic: str,
+    safe_parquet: bool = True,
+    keep_zeros: bool = False,
+    invert_axes=None,
+    verbose=False,
 ) -> Dataset:
     """
     Load a point cloud dataset from a ROS bag file.
@@ -32,6 +38,7 @@ def load_pointcloudset(
         safe_parquet (bool, optional): Whether to store pre-generated point cloud dataset files in Parquet format if
             available. Defaults to True.
         keep_zeros (bool, optional): Whether to keep points with zero coordinates. Defaults to False.
+        invert_axes (list, optional): List of axes to invert (Multiply by -1). Defaults to None.
         verbose (bool, optional): Whether to print verbose output. Defaults to False.
 
     Returns:
@@ -71,8 +78,22 @@ def load_pointcloudset(
     dataset = Dataset.from_file(pointcloudset_path)
     if verbose:
         print_stats(pointcloudset_path, dataset)
+    
+    if invert_axes:
+        if not isinstance(invert_axes, list):
+            raise TypeError("invert_axes must be a list")
+        missing_axis = [elem for elem in invert_axes if elem not in dataset.daskdataframe.columns]
+        if missing_axis:
+            raise ValueError(f"These axis are not in present in dataset: {missing_axis}")
+        dataset = dataset.apply(_invert_axes, axes=invert_axes)
+        
     return dataset
 
+
+def _invert_axes(frame: PointCloud, axes) -> PointCloud:
+    df = frame.data
+    df.update(-df[axes])
+    return PointCloud(df)
 
 def get_dataset_statistics(dataset: Dataset):
     pass
