@@ -5,7 +5,7 @@
 _extended_summary_
 """
 
-from src.data.get_pointcloud_data import load_pointcloudset
+from src.data.pointcloud_processing import load_pointcloudset
 from src.data import config
 
 

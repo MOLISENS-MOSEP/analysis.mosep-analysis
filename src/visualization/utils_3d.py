@@ -79,7 +79,7 @@ if __name__ == "__main__":
     fig.show()
 
 if __name__.startswith("bokeh"):
-    from src.data import get_pointcloud_data
+    from src.data import pointcloud_processing
     from src.data.config import TARGET_EXTENTS
     import warnings
 
@@ -88,7 +88,7 @@ if __name__.startswith("bokeh"):
     BAG_NAME = "molisens_met_2023_04_14-09_23_34_converted"
     DATA_DIR = "/workspaces/MOLISENSext_analysis/data/2interim/bad_aussee/data"
 
-    dataset = get_pointcloud_data.load_pointcloudset(
+    dataset = pointcloud_processing.load_pointcloudset(
         DATA_DIR,
         BAG_NAME,
         topic="/sensing/lidar/points",
