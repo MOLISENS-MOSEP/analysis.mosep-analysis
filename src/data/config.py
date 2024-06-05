@@ -54,39 +54,40 @@ TARGET_EXTENTS_VIF = {
     "Target 5": Limits(
         x_min=45.58, x_max=45.80, y_min=-2.60, y_max=0.50, z_min=-2.26, z_max=-1.20, r_min=45.50, r_max=45.90
     ),
-    "Ring Sensor": Limits(
-        x_min=None, x_max=0.00, y_min=None, y_max=None, z_min=0.067, z_max=None, r_min=0.00, r_max=0.60
-    ),  # done
 }
 
-y1 = -1.5261115634989952
-y2 = -0.5458566448985975
-
-
 TARGET_EXTENTS_VIF_SPLITS = {
-    # Target 1
-    "Target 1 white": TARGET_EXTENTS_VIF["Target 1"].replace(y_min=1.69),
-    "Target 1 grey": TARGET_EXTENTS_VIF["Target 1"].replace(y_min=1.20).replace(y_max=1.69),
-    "Target 1 black": TARGET_EXTENTS_VIF["Target 1"].replace(y_max=1.20),
-    # Target 2
-    "Target 2 white": TARGET_EXTENTS_VIF["Target 2"].replace(y_max=-0.21),
-    "Target 2 grey": TARGET_EXTENTS_VIF["Target 2"].replace(y_min=-0.21).replace(y_max=0.31),
-    "Target 2 black": TARGET_EXTENTS_VIF["Target 2"].replace(y_min=0.31),
-    # Target 3
-    "Target 3 white": TARGET_EXTENTS_VIF["Target 3"].replace(y_min=-2.61).replace(y_max=-2.06),
-    "Target 3 grey": TARGET_EXTENTS_VIF["Target 3"].replace(y_min=-2.61),
-    "Target 3 black": TARGET_EXTENTS_VIF["Target 3"].replace(y_max=-2.06),
-    # Target 4
-    "Target 4 white": TARGET_EXTENTS_VIF["Target 4"].replace(y_max=1.10),
-    "Target 4 grey": TARGET_EXTENTS_VIF["Target 4"].replace(y_min=1.10).replace(y_max=1.50),
-    "Target 4 black": TARGET_EXTENTS_VIF["Target 4"].replace(y_min=1.50),
-    # Target 5
-    "Target 5 white": TARGET_EXTENTS_VIF["Target 5"].replace(y_min=-1.53).replace(y_max=-0.55),
-    "Target 5 grey": TARGET_EXTENTS_VIF["Target 5"].replace(y_min=-1.53),
-    "Target 5 black": TARGET_EXTENTS_VIF["Target 5"].replace(y_max=-0.55),
+    "Target 1": {
+        "white": TARGET_EXTENTS_VIF["Target 1"].replace(y_min=1.69),
+        "grey": TARGET_EXTENTS_VIF["Target 1"].replace(y_min=1.20).replace(y_max=1.69),
+        "black": TARGET_EXTENTS_VIF["Target 1"].replace(y_max=1.20),
+    },
+    "Target 2": {
+        "white": TARGET_EXTENTS_VIF["Target 2"].replace(y_max=-0.21),
+        "grey": TARGET_EXTENTS_VIF["Target 2"].replace(y_min=-0.21).replace(y_max=0.31),
+        "black": TARGET_EXTENTS_VIF["Target 2"].replace(y_min=0.31),
+    },
+    "Target 3": {
+        "white": TARGET_EXTENTS_VIF["Target 3"].replace(y_min=-2.61).replace(y_max=-2.06),
+        "grey": TARGET_EXTENTS_VIF["Target 3"].replace(y_min=-2.61),
+        "black": TARGET_EXTENTS_VIF["Target 3"].replace(y_max=-2.06),
+    },
+    "Target 4": {
+        "white": TARGET_EXTENTS_VIF["Target 4"].replace(y_max=1.10),
+        "grey": TARGET_EXTENTS_VIF["Target 4"].replace(y_min=1.10).replace(y_max=1.50),
+        "black": TARGET_EXTENTS_VIF["Target 4"].replace(y_min=1.50),
+    },
+    "Target 5": {
+        "white": TARGET_EXTENTS_VIF["Target 5"].replace(y_min=-1.53).replace(y_max=-0.55),
+        "grey": TARGET_EXTENTS_VIF["Target 5"].replace(y_min=-1.53),
+        "black": TARGET_EXTENTS_VIF["Target 5"].replace(y_max=-0.55),
+    },
 }
 
 ROOF_EXTENT = Limits(x_min=1, x_max=50, y_min=-3.4, y_max=2.7, z_min=None, z_max=None, r_min=None, r_max=None)
+
+RING_INNER = Limits(x_min=0, x_max=None, y_min=None, y_max=None, z_min=-0.065, z_max=None, r_min=0.00, r_max=0.6)
+RING_OUTER = Limits(x_min=0, x_max=None, y_min=None, y_max=None, z_min=-0.2, z_max=None, r_min=0.6, r_max=20.0)
 
 if __name__ == "__main__":
     print(TARGET_EXTENTS_VIF_SPLITS)
