@@ -13,7 +13,7 @@ from rich.progress import track
 
 from src.data import config
 from src.tools.fix_ros2_metadata_file import fix_timestamp_order
-from src.data import get_timeseries_data
+from src.data import timeseries_processing
 
 
 # * Note that multiple metadata concepts appear in this script:
@@ -54,7 +54,7 @@ def extract_metadata(bag_path: Union[str, Path]) -> Tuple[dict, plt.Figure]:
     bag_path = Path(bag_path)
     meta = {"note_type": "measurement", "bag_size": get_total_mcap_size(bag_path)}
 
-    df = get_timeseries_data.load(bag_path, "/sensing/aws/ws100_measurements", config.PATH_TO_LUFFT_MSGS)
+    df = timeseries_processing.load(bag_path, "/sensing/aws/ws100_measurements", config.PATH_TO_LUFFT_MSGS)
     precip_stats = {
         "min": df.precipitation.intensity_hour.min(),
         "max": df.precipitation.intensity_hour.max(),
@@ -64,7 +64,7 @@ def extract_metadata(bag_path: Union[str, Path]) -> Tuple[dict, plt.Figure]:
     meta["precipitation_intensity_hour"] = precip_stats
 
     # Get the topics and additional metadata form bagfile
-    topics = get_timeseries_data.get_topics_of_bagfile(bag_path, verbose=False)
+    topics = timeseries_processing.get_topics_of_bagfile(bag_path, verbose=False)
     # Stringify the datetime objects
     topics["start_time"] = topics["start_time"].strftime("%Y-%m-%d %H:%M:%S")
     topics["end_time"] = topics["end_time"].strftime("%Y-%m-%d %H:%M:%S")

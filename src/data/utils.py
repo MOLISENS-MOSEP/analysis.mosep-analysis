@@ -1,6 +1,7 @@
-from typing import NamedTuple, Union
-from pointcloudset import PointCloud
 from bisect import bisect_left, bisect_right
+import pandas as pd
+from pointcloudset import PointCloud, Dataset
+from typing import NamedTuple, Union
 
 
 class Limits(NamedTuple):
@@ -30,7 +31,7 @@ class Limits(NamedTuple):
         y_max = float("inf") if self.y_max is None else self.y_max
         z_min = float("-inf") if self.z_min is None else self.z_min
         z_max = float("inf") if self.z_max is None else self.z_max
-        r_min = float("-inf") if self.r_min is None else (self.r_min * 1e3)  # convert to m to mm
+        r_min = float("-inf") if self.r_min is None else (self.r_min * 1e3)  # convert m to mm
         r_max = float("inf") if self.r_max is None else (self.r_max * 1e3)
 
         return (
@@ -39,6 +40,18 @@ class Limits(NamedTuple):
             .limit(dim="z", minvalue=z_min, maxvalue=z_max)
             .limit(dim="range", minvalue=r_min, maxvalue=r_max)
         )
+
+    def replace(self, **kwargs):
+        """
+        Returns a new Limits object replacing specified fields with new values
+
+        Args:
+            **kwargs: fields to replace with new values.
+
+        Returns:
+            Limits: A new Limits object with the replaced fields.
+        """
+        return self._replace(**kwargs)
 
     def get_vertices_from_limits(self, format: str = "xyz"):
         """Calculates the coordinates of the 8 vertices of a cube given the minimum and maximum values for each
@@ -83,9 +96,9 @@ class Limits(NamedTuple):
 
 
 def take_closest(sorted_list, value, get_index=False, position="left"):
-    """
-    Returns the closest value to `value` in a sorted list.
+    """Returns the closest value to `value` in a sorted list.
 
+    Also works for datetime objects which means it can be used to choose a Pointcloud from a Dataset.
     If two numbers are equally close, return the smaller number (position="left") or the bigger number
     (position="right").
 
@@ -130,6 +143,20 @@ def take_closest(sorted_list, value, get_index=False, position="left"):
 
 def take_closest_unsorted(unsorted_list, value):
     return min(unsorted_list, key=lambda x: abs(x - value))
+
+
+def get_pointcloud_from_timestamp(ds: Dataset, timestamp: str, position: str = "left") -> PointCloud:
+    """Get the PointCloud closest to a given timestamp from a Dataset.
+
+    Args:
+        ds (Dataset): The Dataset object to search for the PointCloud.
+        timestamp (str): The timestamp to search for in a format understood by pandas.to_datetime.
+
+    Returns:
+        PointCloud: The PointCloud closest to the given timestamp.
+    """
+    closest = take_closest(ds.timestamps, pd.to_datetime(timestamp), position=position)
+    return ds[ds._get_pointcloud_number_from_time(closest)]
 
 
 if __name__ == "__main__":

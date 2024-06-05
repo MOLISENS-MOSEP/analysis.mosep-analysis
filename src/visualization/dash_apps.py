@@ -2,8 +2,8 @@
 
 import pandas as pd
 import plotly.graph_objs as go
-from jupyter_dash import JupyterDash
-from dash import dcc, html, dash_table
+import dash
+# from jupyter_dash import JupyterDash
 from dash.dependencies import Input, Output, State
 
 
@@ -32,7 +32,16 @@ def run_dash_3d_selection(df: pd.DataFrame, c_column="intensity", color_range=No
     camera = dict(eye=dict(x=0, y=-1, z=2.5), projection=dict(type="orthographic"))
 
     # Initialize the JupyterDash app
-    app = JupyterDash(__name__)
+    # app = JupyterDash(__name__)
+    app = dash.Dash(__name__, serve_locally=False)
+
+    # Create hover text for 3D scatter plot
+    hover_text = df.apply(
+        lambda row: f"x: {row['x']}<br>y: {row['y']}<br>z: {row['z']}<br>intensity: {row['intensity']}"
+        if "intensity" in df.columns
+        else f"x: {row['x']}<br>y: {row['y']}<br>z: {row['z']}",
+        axis=1,
+    )
 
     # Create the 3D scatter plot
     scatter3d = go.Figure(
@@ -43,12 +52,13 @@ def run_dash_3d_selection(df: pd.DataFrame, c_column="intensity", color_range=No
                 z=df["z"],
                 mode="markers",
                 marker=dict(size=5, color=color, cmin=cmin, cmax=cmax, colorscale="Plasma"),
+                hovertemplate=hover_text,
             )
         ],
         layout=go.Layout(
             title="3D Scatter Plot",
             margin=dict(l=50, r=50, b=50, t=50),
-            scene=dict(aspectmode="data", camera=camera, yaxis=dict(autorange="reversed")),
+            scene=dict(aspectmode="data", camera=camera),
         ),
     )
 
@@ -59,15 +69,17 @@ def run_dash_3d_selection(df: pd.DataFrame, c_column="intensity", color_range=No
                 x=df["x"],
                 y=df["y"],
                 mode="markers",
-                marker=dict(size=5),
+                marker=dict(size=5, color=color, cmin=cmin, cmax=cmax, colorscale="Plasma"),
                 selected=dict(marker=dict(color="red", size=10)),
+                hovertemplate=hover_text,
             )
         ],
         layout=go.Layout(
             title="2D Scatter Plot (Top-Down View, x-y)",
             margin=dict(l=50, r=50, b=50, t=50),
-            yaxis=dict(autorange="reversed"),
             dragmode="select",
+            xaxis=dict(scaleanchor="y", scaleratio=1),
+            yaxis=dict(scaleanchor="x", scaleratio=1),
         ),
     )
 
@@ -78,59 +90,92 @@ def run_dash_3d_selection(df: pd.DataFrame, c_column="intensity", color_range=No
                 x=df["x"],
                 y=df["z"],
                 mode="markers",
-                marker=dict(size=5),
+                marker=dict(size=5, color=color, cmin=cmin, cmax=cmax, colorscale="Plasma"),
                 selected=dict(marker=dict(color="red", size=10)),
+                hovertemplate=hover_text,
             )
         ],
         layout=go.Layout(
-            title="2D Scatter Plot (Side View, x-z)", margin=dict(l=50, r=50, b=50, t=50), dragmode="select"
+            title="2D Scatter Plot (Side View, x-z)",
+            margin=dict(l=50, r=50, b=50, t=50),
+            dragmode="select",
+            xaxis=dict(scaleanchor="y", scaleratio=1),
+            yaxis=dict(scaleanchor="x", scaleratio=1),
         ),
     )
 
     # Define the layout of the app
-    app.layout = html.Div(
+    app.layout = dash.html.Div(
         [
-            dcc.Graph(id="3d-scatter-plot", figure=scatter3d, style={"height": "600px"}),
-            dcc.Graph(id="2d-scatter-plot-xy", figure=scatter2d_xy, style={"height": "400px"}),
-            dcc.Graph(id="2d-scatter-plot-xz", figure=scatter2d_xz, style={"height": "400px"}),
-            html.Div(id="stats-table"),
+            dash.dcc.Graph(id="3d-scatter-plot", figure=scatter3d, style={"height": "600px"}),
+            dash.dcc.Graph(
+                id="2d-scatter-plot-xy", figure=scatter2d_xy, style={"height": "400px"}, config={"scrollZoom": True}
+            ),
+            dash.dcc.Graph(
+                id="2d-scatter-plot-xz", figure=scatter2d_xz, style={"height": "400px"}, config={"scrollZoom": True}
+            ),
+            dash.html.Div(id="stats-table"),
         ]
     )
 
     # Callback to update the 3D plot and 2D projections based on selections
     @app.callback(
+        Output("2d-scatter-plot-xy", "figure"),
+        [Input("2d-scatter-plot-xy", "selectedData")],
+        [State("2d-scatter-plot-xy", "figure")],
+    )
+    def update_2d_xy(selectedDataXY, fig2dxy):
+        selected_indices_xy = set()
+        if selectedDataXY and "points" in selectedDataXY:
+            selected_indices_xy = {point["pointIndex"] for point in selectedDataXY["points"]}
+
+        print("Selected indices from XY projection:", selected_indices_xy)
+        return fig2dxy
+
+    @app.callback(
+        Output("2d-scatter-plot-xz", "figure"),
+        [Input("2d-scatter-plot-xz", "selectedData")],
+        [State("2d-scatter-plot-xz", "figure")],
+    )
+    def update_2d_xz(selectedDataXZ, fig2dxz):
+        selected_indices_xz = set()
+        if selectedDataXZ and "points" in selectedDataXZ:
+            selected_indices_xz = {point["pointIndex"] for point in selectedDataXZ["points"]}
+
+        print("Selected indices from XZ projection:", selected_indices_xz)
+        return fig2dxz
+
+    @app.callback(
         [
             Output("3d-scatter-plot", "figure"),
-            Output("2d-scatter-plot-xy", "figure"),
-            Output("2d-scatter-plot-xz", "figure"),
             Output("stats-table", "children"),
         ],
         [Input("2d-scatter-plot-xy", "selectedData"), Input("2d-scatter-plot-xz", "selectedData")],
         [
+            State("3d-scatter-plot", "relayoutData"),
             State("3d-scatter-plot", "figure"),
-            State("2d-scatter-plot-xy", "figure"),
-            State("2d-scatter-plot-xz", "figure"),
         ],
     )
-    def update_plots(selectedDataXY, selectedDataXZ, fig3d, fig2dxy, fig2dxz):
+    def update_3d(selectedDataXY, selectedDataXZ, relayoutData3d, fig3d):
         selected_indices_xy = set()
-        if selectedDataXY:
-            selected_indices_xy.update([point["pointIndex"] for point in selectedDataXY["points"]])
-
         selected_indices_xz = set()
-        if selectedDataXZ:
-            selected_indices_xz.update([point["pointIndex"] for point in selectedDataXZ["points"]])
 
-        # Intersection of selected indices in both views
+        if selectedDataXY and "points" in selectedDataXY:
+            selected_indices_xy = {point["pointIndex"] for point in selectedDataXY["points"]}
+
+        if selectedDataXZ and "points" in selectedDataXZ:
+            selected_indices_xz = {point["pointIndex"] for point in selectedDataXZ["points"]}
+
         selected_indices = list(selected_indices_xy.intersection(selected_indices_xz))
 
-        # Debug print statements
-        # print("Selected indices from XY projection:", selected_indices_xy)
-        # print("Selected indices from XZ projection:", selected_indices_xz)
-        # print("Intersection of selected indices:", selected_indices)
+        print("Intersection of selected indices:", selected_indices)
+
+        if relayoutData3d and "scene.camera" in relayoutData3d:
+            camera_settings = relayoutData3d["scene.camera"]
+        else:
+            camera_settings = fig3d["layout"]["scene"]["camera"]
 
         if not selected_indices:
-            # If no points are selected in both projections, return the original figures without highlighting
             scatter3d_clean = go.Figure(
                 data=[
                     go.Scatter3d(
@@ -139,47 +184,22 @@ def run_dash_3d_selection(df: pd.DataFrame, c_column="intensity", color_range=No
                         z=df["z"],
                         mode="markers",
                         marker=dict(size=5, color=color, cmin=cmin, cmax=cmax, colorscale="Plasma"),
+                        hovertemplate=hover_text,
                     )
                 ],
                 layout=fig3d["layout"],
             )
-
-            scatter2d_xy_clean = go.Figure(
-                data=[
-                    go.Scatter(
-                        x=df["x"],
-                        y=df["y"],
-                        mode="markers",
-                        marker=dict(size=5, color=color, cmin=cmin, cmax=cmax, colorscale="Plasma"),
-                        selected=dict(marker=dict(color="red", size=10)),
-                    )
-                ],
-                layout=fig2dxy["layout"],
-            )
-
-            scatter2d_xz_clean = go.Figure(
-                data=[
-                    go.Scatter(
-                        x=df["x"],
-                        y=df["z"],
-                        mode="markers",
-                        marker=dict(size=5, color=color, cmin=cmin, cmax=cmax, colorscale="Plasma"),
-                        selected=dict(marker=dict(color="red", size=10)),
-                    )
-                ],
-                layout=fig2dxz["layout"],
-            )
-
-            return (
-                scatter3d_clean,
-                scatter2d_xy_clean,
-                scatter2d_xz_clean,
-                html.Div("Select points in the 2D plots to see statistics"),
-            )
+            scatter3d_clean.update_layout(scene_camera=camera_settings)
+            return scatter3d_clean, dash.html.Div("Select points in the 2D plots to see statistics")
 
         selected_df = df.iloc[selected_indices]
+        updated_hover_text = selected_df.apply(
+            lambda row: f"x: {row['x']}<br>y: {row['y']}<br>z: {row['z']}<br>intensity: {row['intensity']}"
+            if "intensity" in df.columns
+            else f"x: {row['x']}<br>y: {row['y']}<br>z: {row['z']}",
+            axis=1,
+        )
 
-        # Update the 3D scatter plot with highlighted points
         scatter3d_updated = go.Figure(
             data=[
                 go.Scatter3d(
@@ -188,6 +208,7 @@ def run_dash_3d_selection(df: pd.DataFrame, c_column="intensity", color_range=No
                     z=df["z"],
                     mode="markers",
                     marker=dict(size=5, color=color, cmin=cmin, cmax=cmax, colorscale="Plasma"),
+                    hovertemplate=hover_text,
                 ),
                 go.Scatter3d(
                     x=selected_df["x"],
@@ -195,52 +216,23 @@ def run_dash_3d_selection(df: pd.DataFrame, c_column="intensity", color_range=No
                     z=selected_df["z"],
                     mode="markers",
                     marker=dict(size=5, color="red"),
+                    hovertemplate=updated_hover_text,
                 ),
             ],
             layout=fig3d["layout"],
         )
+        scatter3d_updated.update_layout(scene_camera=camera_settings)
 
-        # Update the top-down 2D scatter plot with highlighted points
-        scatter2d_xy_updated = go.Figure(
-            data=[
-                go.Scatter(
-                    x=df["x"],
-                    y=df["y"],
-                    mode="markers",
-                    marker=dict(size=5, color=color, cmin=cmin, cmax=cmax, colorscale="Plasma"),
-                    selected=dict(marker=dict(color="red", size=10)),
-                ),
-                go.Scatter(x=selected_df["x"], y=selected_df["y"], mode="markers", marker=dict(size=5, color="red")),
-            ],
-            layout=fig2dxy["layout"],
-        )
-
-        # Update the side view 2D scatter plot with highlighted points
-        scatter2d_xz_updated = go.Figure(
-            data=[
-                go.Scatter(
-                    x=df["x"],
-                    y=df["z"],
-                    mode="markers",
-                    marker=dict(size=5, color=color, cmin=cmin, cmax=cmax, colorscale="Plasma"),
-                    selected=dict(marker=dict(color="red", size=10)),
-                ),
-                go.Scatter(x=selected_df["x"], y=selected_df["z"], mode="markers", marker=dict(size=5, color="red")),
-            ],
-            layout=fig2dxz["layout"],
-        )
-
-        # Compute and return statistics for the selected points
-        stats = selected_df.describe().transpose()[["min", "max", "count"]]
+        stats = selected_df.describe().transpose()[["min", "max", "mean", "count"]]
         return (
             scatter3d_updated,
-            scatter2d_xy_updated,
-            scatter2d_xz_updated,
-            dash_table.DataTable(
+            dash.dash_table.DataTable(
                 data=stats.reset_index().to_dict("records"),
                 columns=[{"name": i, "id": i} for i in stats.reset_index().columns],
             ),
         )
 
     # Run the app in Jupyter notebook
-    app.run_server(mode="external", debug=True)
+    return app
+    # app.run_server(mode="external", debug=True)
+
