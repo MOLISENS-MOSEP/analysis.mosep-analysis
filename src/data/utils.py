@@ -159,6 +159,33 @@ def get_pointcloud_from_timestamp(ds: Dataset, timestamp: str, position: str = "
     return ds[ds._get_pointcloud_number_from_time(closest)]
 
 
+def normalize_df(df: pd.DataFrame, kind: str = "standard") -> pd.DataFrame:
+    """
+    Normalizes a DataFrame using either standard or min-max normalization.
+
+    This function applies either standard normalization (z-score normalization) or min-max normalization to a DataFrame.
+    The type of normalization is determined by the `kind` parameter.
+
+    Args:
+        df (pd.DataFrame): The input DataFrame to normalize.
+        kind (str, optional): The type of normalization to apply. If "standard", applies standard normalization. If
+            "minmax", applies min-max normalization. Defaults to "standard".
+
+    Returns:
+        pd.DataFrame: The normalized DataFrame.
+
+    Raises:
+        ValueError: If the `kind` parameter is not "standard" or "minmax".
+    """
+    df = df.copy()
+    if kind == "standard":
+        return (df - df.mean()) / df.std()
+    elif kind == "minmax":
+        return (df - df.min()) / (df.max() - df.min())
+    else:
+        raise ValueError(f"Normalization kind {kind} not supported. Use 'standard' or 'minmax'.")
+
+
 if __name__ == "__main__":
     limits = Limits(x_min=0, x_max=10, y_min=0, y_max=10, z_min=0, z_max=10)
     print(limits.get_vertices_from_limits())

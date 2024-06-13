@@ -3,6 +3,7 @@
 # from src.data import config
 
 from pathlib import Path
+import warnings
 
 import pandas as pd
 from pointcloudset import Dataset, PointCloud
@@ -10,6 +11,7 @@ from rich import print as rprint
 from tqdm import tqdm
 
 from src.data import extract_pcs_from_bagfile
+from src.data.utils import Limits
 
 
 def print_stats(bag_path, dataset):
@@ -170,6 +172,46 @@ def resample_dataset(ds: Dataset, resampling_period: str, statistics: list = Non
             ds_resampled[stat].append(PointCloud(df, timestamp=ts))
 
     return {key: Dataset.from_instance("pointclouds", value) for key, value in ds_resampled.items()}
+
+
+def subset_and_aggregate_dataset(
+    dataset: Dataset, splits: dict[str, dict[str, Limits]], func: callable, return_type: dict = "dict"
+) -> dict | pd.DataFrame:
+    """
+    Aggregates a dataset of point clouds into a single DataFrame.
+
+    This function applies a given aggregation function to subsets of each point cloud in the dataset, defined by the
+    limits dictionary. The results are then aggregated either in a dictionary or a DataFrame, depending on the
+    `return_type` parameter and the aggregation function `func`.
+
+    Args:
+        dataset (pointcloudset.Dataset): The input dataset of point clouds.
+        limits_dict (dict[dict]): A dictionary defining the limits for subsets. The keys should be subset names and the values
+            should be dictionaries mapping column names to limit objects.
+        agg_func (callable): An aggregation function to apply to each subset in the point clouds. This function should
+            take a pandas Series as input and return a single value.
+        return_type (str, optional): The type of the output. If "dict", the function returns a dictionary. If "df", the
+            function returns a DataFrame. Defaults to "dict".
+
+    Returns:
+        dict or pd.DataFrame: The aggregated data, either in a dictionary or a DataFrame, depending on the `return_type`
+            parameter. Each subset is a column and each timestamp (point cloud from the dataset) is a row.
+    """
+    result_dict = {}
+    for target_name, color_dict in splits.items():
+        result_dict[target_name] = {}
+        for col, target_limits in color_dict.items():
+            with warnings.catch_warnings(record=True):
+                result_dict[target_name][col] = pd.concat(dataset.apply(target_limits.apply_limits).apply(func))
+    if return_type == "dict":
+        return result_dict
+
+    if return_type == "df":
+        return pd.concat(
+            [pd.DataFrame(v) for v in result_dict.values()],
+            axis=1,
+            keys=result_dict.keys(),
+        )
 
 
 if __name__ == "__main__":
