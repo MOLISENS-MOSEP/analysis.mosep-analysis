@@ -10,6 +10,7 @@ def target_stat_vs_precipitation(
     target_df: pd.DataFrame,
     precipitation_se: pd.Series,
     value_name: str = "intensity",
+    exclude_cols: list[str] = None,
     precipitation_name: str = None,
     yaxis_title: str = None,
     yaxis2_title: str = None,
@@ -26,6 +27,8 @@ def target_stat_vs_precipitation(
         color = target_df.columns.names[0]
         dash = target_df.columns.names[1]
 
+    if exclude_cols:
+        target_df = target_df.drop(columns=exclude_cols)
     target_df_melted = target_df.melt(value_name=value_name, ignore_index=False).reset_index()
 
     fig = make_subplots(specs=[[{"secondary_y": True}]])
@@ -84,7 +87,7 @@ def target_stat_vs_precipitation(
         width=fig_size[0],
         height=fig_size[1],
         # title="Rainfall Rate vs. Noise in Pointclouds",
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=0.8),
+        # legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1.0),
         xaxis_title="",
         yaxis_title=yaxis_title,
         yaxis2_title=yaxis2_title,

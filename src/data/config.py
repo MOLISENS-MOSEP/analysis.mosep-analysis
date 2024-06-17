@@ -52,7 +52,7 @@ TARGET_EXTENTS_VIF = {
         x_min=32.30, x_max=32.42, y_min=0.5, y_max=2.10, z_min=-2.00, z_max=-1.32, r_min=32.30, r_max=32.60
     ),
     "Target 5": Limits(
-        x_min=45.58, x_max=45.80, y_min=-2.60, y_max=0.50, z_min=-2.26, z_max=-1.20, r_min=45.50, r_max=45.90
+        x_min=45.51, x_max=45.80, y_min=-2.75, y_max=0.60, z_min=-2.26, z_max=-1.20, r_min=45.50, r_max=45.90
     ),
 }
 
@@ -78,9 +78,9 @@ TARGET_EXTENTS_VIF_SPLITS = {
         "black": TARGET_EXTENTS_VIF["Target 4"].replace(y_min=1.50),
     },
     "Target 5": {
-        "white": TARGET_EXTENTS_VIF["Target 5"].replace(y_min=-1.53).replace(y_max=-0.55),
-        "grey": TARGET_EXTENTS_VIF["Target 5"].replace(y_min=-1.53),
-        "black": TARGET_EXTENTS_VIF["Target 5"].replace(y_max=-0.55),
+        "white": TARGET_EXTENTS_VIF["Target 5"].replace(y_min=-1.53).replace(y_max=-0.53),
+        "grey": TARGET_EXTENTS_VIF["Target 5"].replace(y_min=-0.53),
+        "black": TARGET_EXTENTS_VIF["Target 5"].replace(y_max=-1.53),
     },
 }
 
