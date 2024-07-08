@@ -39,48 +39,50 @@ TARGET_EXTENTS_BA = [
 # in r +-0.1 m
 TARGET_EXTENTS_VIF = {
     #                   xmin,  xmax,  ymin, ymax, zmin,  zmax, rmin, rmax
-    "Target 1": Limits(
+    "Target-01": Limits(
         x_min=5.90, x_max=6.30, y_min=0.72, y_max=2.20, z_min=-1.40, z_max=-0.80, r_min=6.19, r_max=6.57
     ),  # done
-    "Target 2": Limits(
+    "Target-02": Limits(
         x_min=14.00, x_max=14.25, y_min=-0.80, y_max=0.85, z_min=-1.60, z_max=-1.05, r_min=14.00, r_max=14.40
     ),
-    "Target 3": Limits(
+    "Target-03": Limits(
         x_min=23.08, x_max=23.18, y_min=-3.10, y_max=-1.60, z_min=-1.80, z_max=-1.21, r_min=23.10, r_max=23.40
     ),
-    "Target 4": Limits(
+    "Target-04": Limits(
         x_min=32.30, x_max=32.42, y_min=0.5, y_max=2.10, z_min=-2.00, z_max=-1.32, r_min=32.30, r_max=32.60
     ),
-    "Target 5": Limits(
+    "Target-05": Limits(
         x_min=45.51, x_max=45.80, y_min=-2.75, y_max=0.60, z_min=-2.26, z_max=-1.20, r_min=45.50, r_max=45.90
     ),
 }
 
+TARGET_DISTANCES = {k: round(v.r_min + (v.r_max - v.r_min) / 2, 2) for k, v in TARGET_EXTENTS_VIF.items()}
+
 TARGET_EXTENTS_VIF_SPLITS = {
-    "Target 1": {
-        "white": TARGET_EXTENTS_VIF["Target 1"].replace(y_min=1.69),
-        "grey": TARGET_EXTENTS_VIF["Target 1"].replace(y_min=1.20).replace(y_max=1.69),
-        "black": TARGET_EXTENTS_VIF["Target 1"].replace(y_max=1.20),
+    "Target-01": {
+        "white": TARGET_EXTENTS_VIF["Target-01"].replace(y_min=1.69),
+        "grey": TARGET_EXTENTS_VIF["Target-01"].replace(y_min=1.20).replace(y_max=1.69),
+        "black": TARGET_EXTENTS_VIF["Target-01"].replace(y_max=1.20),
     },
-    "Target 2": {
-        "white": TARGET_EXTENTS_VIF["Target 2"].replace(y_max=-0.21),
-        "grey": TARGET_EXTENTS_VIF["Target 2"].replace(y_min=-0.21).replace(y_max=0.31),
-        "black": TARGET_EXTENTS_VIF["Target 2"].replace(y_min=0.31),
+    "Target-02": {
+        "white": TARGET_EXTENTS_VIF["Target-02"].replace(y_max=-0.21),
+        "grey": TARGET_EXTENTS_VIF["Target-02"].replace(y_min=-0.21).replace(y_max=0.31),
+        "black": TARGET_EXTENTS_VIF["Target-02"].replace(y_min=0.31),
     },
-    "Target 3": {
-        "white": TARGET_EXTENTS_VIF["Target 3"].replace(y_min=-2.61).replace(y_max=-2.06),
-        "grey": TARGET_EXTENTS_VIF["Target 3"].replace(y_min=-2.61),
-        "black": TARGET_EXTENTS_VIF["Target 3"].replace(y_max=-2.06),
+    "Target-03": {
+        "white": TARGET_EXTENTS_VIF["Target-03"].replace(y_min=-2.61).replace(y_max=-2.06),
+        "grey": TARGET_EXTENTS_VIF["Target-03"].replace(y_min=-2.61),
+        "black": TARGET_EXTENTS_VIF["Target-03"].replace(y_max=-2.06),
     },
-    "Target 4": {
-        "white": TARGET_EXTENTS_VIF["Target 4"].replace(y_max=1.10),
-        "grey": TARGET_EXTENTS_VIF["Target 4"].replace(y_min=1.10).replace(y_max=1.50),
-        "black": TARGET_EXTENTS_VIF["Target 4"].replace(y_min=1.50),
+    "Target-04": {
+        "white": TARGET_EXTENTS_VIF["Target-04"].replace(y_max=1.10),
+        "grey": TARGET_EXTENTS_VIF["Target-04"].replace(y_min=1.10).replace(y_max=1.50),
+        "black": TARGET_EXTENTS_VIF["Target-04"].replace(y_min=1.50),
     },
-    "Target 5": {
-        "white": TARGET_EXTENTS_VIF["Target 5"].replace(y_min=-1.53).replace(y_max=-0.53),
-        "grey": TARGET_EXTENTS_VIF["Target 5"].replace(y_min=-0.53),
-        "black": TARGET_EXTENTS_VIF["Target 5"].replace(y_max=-1.53),
+    "Target-05": {
+        "white": TARGET_EXTENTS_VIF["Target-05"].replace(y_min=-1.53).replace(y_max=-0.53),
+        "grey": TARGET_EXTENTS_VIF["Target-05"].replace(y_min=-0.53),
+        "black": TARGET_EXTENTS_VIF["Target-05"].replace(y_max=-1.53),
     },
 }
 

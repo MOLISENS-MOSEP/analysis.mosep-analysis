@@ -10,3 +10,4 @@ dependencies:
       - tabulate
       - python-frontmatter
       - dash
+      - scikit-learn
