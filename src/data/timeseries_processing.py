@@ -188,6 +188,10 @@ def load(
     path_to_custom_msgs: Path = None,
     timestamp_source: str = "header",
 ) -> pd.DataFrame:
+    if topic not in get_topics_of_bagfile(bag_file, verbose=False)["topics"]:
+        print(get_topics_of_bagfile(bag_file, verbose=True))
+        raise ValueError(f"Topic {topic} not found in bag file.")
+
     data = get_data_deserialized(bag_file, topic, path_to_custom_msgs, timestamp_source=timestamp_source)
     df = pd.DataFrame(data).T
     # Add level names for columns and rows
