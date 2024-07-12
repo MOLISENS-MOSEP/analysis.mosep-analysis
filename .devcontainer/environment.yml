@@ -5,6 +5,7 @@ dependencies:
   # - pytorch
   - panel
   - pip:
+      - plotly>=5.13
       - pointcloudset==0.9.0
       - ouster-sdk
       - tabulate

@@ -186,6 +186,38 @@ def normalize_df(df: pd.DataFrame, kind: str = "standard") -> pd.DataFrame:
         raise ValueError(f"Normalization kind {kind} not supported. Use 'standard' or 'minmax'.")
 
 
+def flatten_multiindex(df: pd.DataFrame, sep: str = ".", levels: int = 1) -> Union[pd.Index, pd.MultiIndex]:
+    """
+    Modifies a DataFrame with a MultiIndex column or index IN PLACE, flattening it into a single-level column DataFrame
+    or index DataFrame, depending on the value of the `levels` parameter. The DataFrame will have columns or index
+    with names that are a concatenation of the levels of the MultiIndex, separated by the `sep` parameter. Returns the
+    original MultiIndex columns or index for later use.
+
+    Args:
+        df (pd.DataFrame): The input DataFrame with a MultiIndex column or index to flatten in place.
+        sep (str, optional): The separator to use when concatenating the levels of the MultiIndex. Defaults to ".".
+        levels (int, optional): The level to flatten. If 0, flattens the index. If 1, flattens the columns.
+            Defaults to 1.
+
+    Returns:
+        Union[pd.Index, pd.MultiIndex]: The original MultiIndex columns or index before flattening.
+    """
+    if levels == 0:
+        if not isinstance(df.index, pd.MultiIndex):
+            raise ValueError("DataFrame does not have a MultiIndex index.")
+        original_index = df.index.copy()
+        df.index = [sep.join(map(str, idx)).strip() for idx in df.index.values]
+        return original_index
+    elif levels == 1:
+        if not isinstance(df.columns, pd.MultiIndex):
+            raise ValueError("DataFrame does not have a MultiIndex column.")
+        original_columns = df.columns.copy()
+        df.columns = [sep.join(map(str, col)).strip() for col in df.columns.values]
+        return original_columns
+    else:
+        raise ValueError("Levels parameter must be 0 or 1.")
+
+
 if __name__ == "__main__":
     limits = Limits(x_min=0, x_max=10, y_min=0, y_max=10, z_min=0, z_max=10)
     print(limits.get_vertices_from_limits())

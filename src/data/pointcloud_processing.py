@@ -124,7 +124,7 @@ def resample_dataset(ds: Dataset, resampling_period: str, statistics: list = Non
         ds (Dataset): A pointcloudset Dataset object.
         resampling_period (str): A string representing the resampling period as used by Pandas (e.g. "1s").
         statistics (list, optional): A list of statistics to be used for aggregating the resampled datasets (as
-        supported by Pandas). Mean is always calculated. Defaults to None.
+            supported by Pandas). Mean is always calculated. Defaults to None.
 
     Raises:
         ValueError: If timestamps are not monotonically increasing.
@@ -157,8 +157,8 @@ def resample_dataset(ds: Dataset, resampling_period: str, statistics: list = Non
         # Aggregate PointClouds in the subset
         df_all_stats = sub_ds.agg(statistics, "point")
 
-        # Retrive the mean x, y, z values to be used in all Datasets (i.e. sum and std of x, y, z make no sense)
-        xyz = df_all_stats.loc(axis=1)[["x", "y", "z"], "mean"]
+        # Retrive the mean x, y, z, range, ring values to be used in all Datasets (i.e. sum and std make no sense)
+        xyz = df_all_stats.loc(axis=1)[["x", "y", "z", "range", "ring"], "mean"]
         xyz.columns = xyz.columns.droplevel(1)
 
         # Create a DataFrame for each statistic
@@ -197,21 +197,38 @@ def subset_and_aggregate_dataset(
         dict or pd.DataFrame: The aggregated data, either in a dictionary or a DataFrame, depending on the `return_type`
             parameter. Each subset is a column and each timestamp (point cloud from the dataset) is a row.
     """
-    result_dict = {}
-    for target_name, color_dict in splits.items():
-        result_dict[target_name] = {}
-        for col, target_limits in color_dict.items():
-            with warnings.catch_warnings(record=True):
-                result_dict[target_name][col] = pd.concat(dataset.apply(target_limits.apply_limits).apply(func))
-    if return_type == "dict":
-        return result_dict
 
-    if return_type == "df":
-        return pd.concat(
-            [pd.DataFrame(v) for v in result_dict.values()],
-            axis=1,
-            keys=result_dict.keys(),
-        )
+    def _depth(d):
+        if isinstance(d, dict):
+            return 1 + (max(map(_depth, d.values())) if d else 0)
+        return 0
+
+    result_dict = {}
+
+    if _depth(splits) == 1:
+        for target_name, target_limits in splits.items():
+            result_dict[target_name] = pd.concat(dataset.apply(target_limits.apply_limits).apply(func))
+
+        if return_type == "dict":
+            return result_dict
+        elif return_type == "df":
+            return pd.DataFrame(result_dict)
+
+    elif _depth(splits) == 2:
+        for target_name, color_dict in splits.items():
+            result_dict[target_name] = {}
+            for col, target_limits in color_dict.items():
+                with warnings.catch_warnings(record=True):
+                    result_dict[target_name][col] = pd.concat(dataset.apply(target_limits.apply_limits).apply(func))
+
+        if return_type == "dict":
+            return result_dict
+        elif return_type == "df":
+            return pd.concat(
+                [pd.DataFrame(v) for v in result_dict.values()],
+                axis=1,
+                keys=result_dict.keys(),
+            )
 
 
 if __name__ == "__main__":

@@ -6,6 +6,54 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 
+def plot_timeseries_separate_axes(df: pd.DataFrame, parameters: dict) -> None:
+    # Move plot to module
+    fig = go.Figure()
+
+    # Add traces, each with a unique y-axis
+    for i, (param, param_info) in enumerate(parameters.items(), start=1):
+        fig.add_trace(
+            go.Scatter(
+                x=df.index,
+                y=df[param_info["data_key"]],
+                mode="lines",
+                name=param,
+                line=dict(color=param_info["color"]),
+                yaxis=f"y{i}",
+            )
+        )
+
+    # Create axis objects
+    layout_args = {}
+    for i, (param, param_info) in enumerate(parameters.items(), start=1):
+        if i == 1:
+            layout_args[f"yaxis{i}"] = dict(
+                title=param_info["axis_title"],
+                titlefont=dict(color=param_info["color"]),
+                tickfont=dict(color=param_info["color"]),
+            )
+        else:
+            layout_args[f"yaxis{i}"] = dict(
+                title=param_info["axis_title"],
+                titlefont=dict(color=param_info["color"]),
+                tickfont=dict(color=param_info["color"]),
+                anchor="free",
+                overlaying="y1",
+                autoshift=True,
+                tickmode="sync",
+            )
+
+    fig.update_layout(**layout_args)
+
+    # Update layout properties
+    fig.update_layout(
+        width=1400,
+        height=600,
+    )
+
+    fig.show()
+
+
 def target_stat_vs_precipitation(
     target_df: pd.DataFrame,
     precipitation_se: pd.Series,

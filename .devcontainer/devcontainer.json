@@ -35,7 +35,9 @@
 				"GitHub.vscode-pull-request-github",
 				"charliermarsh.ruff",
 				"ms-python.black-formatter",
-				"ms-python.pylint"
+				"ms-python.pylint",
+				"GitHub.copilot",
+				"GitHub.copilot-chat"
 			],
 			"settings": {
 				"python.formatting.black": true,

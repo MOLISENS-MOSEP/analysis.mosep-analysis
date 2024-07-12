@@ -9,3 +9,7 @@ def n_points(frame: PointCloud) -> pd.Series:
 
 def mean_intensity(frame: PointCloud) -> pd.Series:
     return pd.Series([frame.data.intensity.mean()], index=[frame.timestamp])
+
+
+def sum_intensity(frame: PointCloud) -> pd.Series:
+    return pd.Series([frame.data.intensity.sum()], index=[frame.timestamp])
