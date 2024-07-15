@@ -175,14 +175,14 @@ def resample_dataset(ds: Dataset, resampling_period: str, statistics: list = Non
 
 
 def subset_and_aggregate_dataset(
-    dataset: Dataset, splits: dict[str, dict[str, Limits]], func: callable, return_type: dict = "dict"
+    dataset: Dataset, splits: dict[str, dict[str, Limits]], agg_func: callable = None, return_type: dict = "dict"
 ) -> dict | pd.DataFrame:
     """
     Aggregates a dataset of point clouds into a single DataFrame.
 
     This function applies a given aggregation function to subsets of each point cloud in the dataset, defined by the
     limits dictionary. The results are then aggregated either in a dictionary or a DataFrame, depending on the
-    `return_type` parameter and the aggregation function `func`.
+    `return_type` parameter and the aggregation function `agg_func`.
 
     Args:
         dataset (pointcloudset.Dataset): The input dataset of point clouds.
@@ -207,9 +207,12 @@ def subset_and_aggregate_dataset(
 
     if _depth(splits) == 1:
         for target_name, target_limits in splits.items():
-            result_dict[target_name] = pd.concat(dataset.apply(target_limits.apply_limits).apply(func))
+            rd = dataset.apply(target_limits.apply_limits)
+            if agg_func:
+                rd = pd.concat(rd.apply(agg_func))
+            result_dict[target_name] = rd
 
-        if return_type == "dict":
+        if not agg_func or return_type == "dict":
             return result_dict
         elif return_type == "df":
             return pd.DataFrame(result_dict)
@@ -219,9 +222,12 @@ def subset_and_aggregate_dataset(
             result_dict[target_name] = {}
             for col, target_limits in color_dict.items():
                 with warnings.catch_warnings(record=True):
-                    result_dict[target_name][col] = pd.concat(dataset.apply(target_limits.apply_limits).apply(func))
+                    rd = dataset.apply(target_limits.apply_limits)
+                    if agg_func:
+                        rd = pd.concat(rd.apply(agg_func))
+                    result_dict[target_name][col] = rd
 
-        if return_type == "dict":
+        if not agg_func or return_type == "dict":
             return result_dict
         elif return_type == "df":
             return pd.concat(
