@@ -1,3 +1,4 @@
+from src.data.utils import get_pointcloud_from_timestamp
 from src.visualization.utils_2d import compress_legend as compress_legend_fu
 
 import pandas as pd
@@ -124,7 +125,7 @@ def target_stat_vs_precipitation(
             y=precipitation_se,
             mode="lines",
             name=precipitation_name,
-            line=dict(color="#000080", width=3),
+            line=dict(color="#000080", width=3, shape="hv"),
         ),
         secondary_y=True,
     )
@@ -148,3 +149,106 @@ def target_stat_vs_precipitation(
         compress_legend_fu(fig, [precipitation_name])
 
     return fig
+
+
+def histograms_targets_attime(pcs, weather_stats, timestamps, target_name, plot_value):
+    pld = {}
+    for ts in timestamps:
+        pld[ts] = pd.concat(
+            {col: get_pointcloud_from_timestamp(ds, ts).data for col, ds in pcs[target_name].items()},
+            axis=0,
+            names=["color", "ind_color"],
+        )
+
+    plot_data = pd.concat(pld, axis=0, names=["timestamp"]).reset_index()
+
+    fig = px.line(weather_stats.precipitation.intensity_hour_shifted, line_shape="hv", height=200)
+    # fig.add_hline(y=1, line_dash="dot", annotation_text="Jan 1, 2018 baseline", annotation_position="bottom right")
+    for ts in timestamps:
+        fig.add_vrect(
+            x0=ts,
+            x1=(pd.to_datetime(ts) + pd.Timedelta(minutes=1)).strftime("%Y-%m-%dT%H:%M:%S"),
+            col=1,
+            annotation_text=ts,
+            annotation_position="top left",
+            fillcolor="green",
+            opacity=0.25,
+            line_width=0,
+        )
+    fig.update_layout(
+        xaxis_title=None,
+        showlegend=False,
+        margin=dict(
+            l=80,  # left
+            r=120,  # right
+            t=10,  # top
+            b=10,  # bottom
+        ),
+    )
+    fig.show()
+
+    fig = px.histogram(
+        plot_data,
+        x=plot_value,
+        nbins=100,
+        histnorm="percent",
+        hover_data=plot_data.columns,
+        color="color",
+        marginal="box",
+        title=f"Histogram of target {target_name} for `{plot_value}` at different timestamps",
+        facet_col="timestamp",
+        facet_col_wrap=3,
+        # height=800,
+    )
+
+    return fig
+
+
+def histogram_targets_interactive(target_pcs: dict):
+    import dash
+    from dash import dcc, html
+    from dash.dependencies import Input, Output
+
+    app = dash.Dash(__name__)
+
+    app.layout = html.Div(
+        [
+            dcc.Slider(
+                id="timestamp-slider",
+                min=0,
+                max=len(target_pcs["Target-01"]["grey"]) - 1,
+                value=0,
+                marks={str(ts): str(ts) for ts in range(0, 60, 5)},
+                step=1,
+                updatemode="drag",  # Update the output as the slider is dragged
+            ),
+            dcc.Graph(id="intensity-histogram"),
+        ]
+    )
+
+    @app.callback(Output("intensity-histogram", "figure"), [Input("timestamp-slider", "value")])
+    def update_figure(selected_ts):
+        plot_data = pd.concat(
+            {col: ds[selected_ts].data for col, ds in target_pcs["Target-01"].items()}, axis=0, names=["color"]
+        ).reset_index()
+
+        traces = []
+        for color in plot_data["color"].unique():
+            df_filtered = plot_data[plot_data["color"] == color]
+            traces.append(
+                go.Histogram(x=df_filtered["intensity"], name=color, nbinsx=100, histnorm="percent", opacity=0.75)
+            )
+
+        figure = {
+            "data": traces,
+            "layout": go.Layout(
+                title=f"Timestamp: {target_pcs['Target-01']['grey'].timestamps[selected_ts]}",
+                xaxis={"title": "Intensity"},
+                yaxis={"title": "Percent"},
+                legend={"title": "Color"},
+                barmode="overlay",
+            ),
+        }
+        return figure
+
+    return app
