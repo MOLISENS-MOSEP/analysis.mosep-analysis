@@ -1,3 +1,4 @@
+from src.data.config import TARGET_DISTANCES
 from src.data.utils import get_pointcloud_from_timestamp
 from src.visualization.utils_2d import compress_legend as compress_legend_fu
 
@@ -195,7 +196,7 @@ def histograms_targets_attime(pcs, weather_stats, timestamps, target_name, plot_
         hover_data=plot_data.columns,
         color="color",
         marginal="box",
-        title=f"Histogram of target {target_name} for `{plot_value}` at different timestamps",
+        title=f"Histogram(s) of target {target_name} (range: {TARGET_DISTANCES[target_name]} m) for `{plot_value}` value",
         facet_col="timestamp",
         facet_col_wrap=3,
         # height=800,

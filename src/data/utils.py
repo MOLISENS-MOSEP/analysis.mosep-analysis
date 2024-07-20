@@ -159,17 +159,21 @@ def get_pointcloud_from_timestamp(ds: Dataset, timestamp: str, position: str = "
     return ds[ds._get_pointcloud_number_from_time(closest)]
 
 
-def normalize_df(df: pd.DataFrame, kind: str = "standard") -> pd.DataFrame:
+def normalize_df(df: pd.DataFrame, kind: str = "standard", fillna: bool = False) -> pd.DataFrame:
     """
     Normalizes a DataFrame using either standard or min-max normalization.
 
     This function applies either standard normalization (z-score normalization) or min-max normalization to a DataFrame.
     The type of normalization is determined by the `kind` parameter.
 
+    Note: To avoid getting NaN values for timeseries with no variation, use fillna=True to fill NaN values with 0 after
+    normalization.
+
     Args:
         df (pd.DataFrame): The input DataFrame to normalize.
         kind (str, optional): The type of normalization to apply. If "standard", applies standard normalization. If
             "minmax", applies min-max normalization. Defaults to "standard".
+        fillna (bool, optional): If True, fill NaN values with 0 after normalization. Defaults to False.
 
     Returns:
         pd.DataFrame: The normalized DataFrame.
@@ -179,11 +183,15 @@ def normalize_df(df: pd.DataFrame, kind: str = "standard") -> pd.DataFrame:
     """
     df = df.copy()
     if kind == "standard":
-        return (df - df.mean()) / df.std()
+        result = (df - df.mean()) / df.std()
     elif kind == "minmax":
-        return (df - df.min()) / (df.max() - df.min())
+        result = (df - df.min()) / (df.max() - df.min())
     else:
         raise ValueError(f"Normalization kind {kind} not supported. Use 'standard' or 'minmax'.")
+
+    if fillna:
+        return result.fillna(0)
+    return result
 
 
 def flatten_multiindex(df: pd.DataFrame, sep: str = ".", levels: int = 1) -> Union[pd.Index, pd.MultiIndex]:
