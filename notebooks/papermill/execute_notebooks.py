@@ -29,6 +29,20 @@ parameters = {
             "2023-08-29T06:41:00",
         ],
     },
+    # "31": {
+    #     "BAG_NAME": "molisens_met_2023_08_29-16_58_02_converted",
+    #     "DATA_DIR": str(config.INTERIM_DATA_FOLDER / "ViF_Roof" / "data"),
+    #     "TIMESTAMPS_HISTOGRAMS": [
+    #         "2023-08-29T16:58:05",
+    #     ],
+    # },
+    # "32": {
+    #     "BAG_NAME": "molisens_met_2023_08_29-17_58_33_converted",
+    #     "DATA_DIR": str(config.INTERIM_DATA_FOLDER / "ViF_Roof" / "data"),
+    #     "TIMESTAMPS_HISTOGRAMS": [
+    #         "2023-08-29T17:58:35",
+    #     ],
+    # },
 }
 
 for run, params in parameters.items():

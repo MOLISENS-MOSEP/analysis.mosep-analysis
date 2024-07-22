@@ -35,8 +35,11 @@ def extract(bag_file: Path, topics: list, verbose: bool = False) -> None:
 
     def extract_topic(bag_file: Path, topic: str, verbose=verbose) -> None:
         if verbose:
-            print(f"Extracting {topic}")
+            print(f"Extracting {topic}...")
         dataset = Dataset.from_file(bag_file, topic=topic, keep_zeros=False)
+        if verbose:
+            print(f"Dataset loaded with len: {len(dataset)}")
+            print("Writing to file...")
         dataset.to_file(
             Path(bag_file.parent / "pointcloudset" / topic[1:].replace("/", "_")),
             use_orig_filename=True,
