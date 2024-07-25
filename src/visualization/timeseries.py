@@ -163,7 +163,12 @@ def histograms_targets_attime(pcs, weather_stats, timestamps, target_name, plot_
 
     plot_data = pd.concat(pld, axis=0, names=["timestamp"]).reset_index()
 
-    fig = px.line(weather_stats.precipitation.intensity_hour_shifted, line_shape="hv", height=200)
+    fig = px.line(
+        weather_stats.precipitation.intensity_hour_shifted,
+        line_shape="hv",
+        height=200,
+        labels={"value": "Rain Rate [mm/h]"},
+    )
     # fig.add_hline(y=1, line_dash="dot", annotation_text="Jan 1, 2018 baseline", annotation_position="bottom right")
     for ts in timestamps:
         fig.add_vrect(
