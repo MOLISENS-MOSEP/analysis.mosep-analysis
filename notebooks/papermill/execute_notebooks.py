@@ -8,6 +8,13 @@ parameters = {
         "DATA_DIR": str(config.INTERIM_DATA_FOLDER / "ViF_Roof" / "data"),
         "TIMESTAMPS_HISTOGRAMS": ["2023-08-07T13:37:00"],
     },
+    "8": {
+        "BAG_NAME": "molisens_met_2023_08_28-21_40_13_converted",
+        "DATA_DIR": str(config.INTERIM_DATA_FOLDER / "ViF_Roof" / "data"),
+        "TIMESTAMPS_HISTOGRAMS": [
+            "2023-08-29T04:05:00",
+        ],
+    },
     "12": {
         "BAG_NAME": "molisens_met_2023_08_29-06_04_46_converted",
         "DATA_DIR": str(config.INTERIM_DATA_FOLDER / "ViF_Roof" / "data"),
@@ -29,20 +36,20 @@ parameters = {
             "2023-08-29T06:41:00",
         ],
     },
-    # "31": {
-    #     "BAG_NAME": "molisens_met_2023_08_29-16_58_02_converted",
-    #     "DATA_DIR": str(config.INTERIM_DATA_FOLDER / "ViF_Roof" / "data"),
-    #     "TIMESTAMPS_HISTOGRAMS": [
-    #         "2023-08-29T16:58:05",
-    #     ],
-    # },
-    # "32": {
-    #     "BAG_NAME": "molisens_met_2023_08_29-17_58_33_converted",
-    #     "DATA_DIR": str(config.INTERIM_DATA_FOLDER / "ViF_Roof" / "data"),
-    #     "TIMESTAMPS_HISTOGRAMS": [
-    #         "2023-08-29T17:58:35",
-    #     ],
-    # },
+    "31": {
+        "BAG_NAME": "molisens_met_2023_08_29-16_58_02_converted",
+        "DATA_DIR": str(config.INTERIM_DATA_FOLDER / "ViF_Roof" / "data"),
+        "TIMESTAMPS_HISTOGRAMS": [
+            "2023-08-29T16:58:05",
+        ],
+    },
+    "32": {
+        "BAG_NAME": "molisens_met_2023_08_29-17_58_33_converted",
+        "DATA_DIR": str(config.INTERIM_DATA_FOLDER / "ViF_Roof" / "data"),
+        "TIMESTAMPS_HISTOGRAMS": [
+            "2023-08-29T17:58:35",
+        ],
+    },
 }
 
 for run, params in parameters.items():

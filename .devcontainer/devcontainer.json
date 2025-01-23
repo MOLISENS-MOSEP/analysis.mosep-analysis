@@ -13,7 +13,7 @@
 		// External data:
 		// "source=/path/to/external/data,target=/workspaces/MOLISENSext_analysis/data/0external,type=bind,consistency=cached",
 		// Raw data:
-		"source=/nas/data/raw/MOLISENSext,target=/workspaces/MOLISENSext_analysis/data/1raw,type=bind,consistency=cached",
+		"source=/nas/home/chg/MOLISENSext,target=/workspaces/MOLISENSext_analysis/data/1raw,type=bind,consistency=cached",
 		// Interim data:
 		"source=/datalocal/chg/MOLISENSext,target=/workspaces/MOLISENSext_analysis/data/2interim,type=bind,consistency=cached",
 		// Processed data:
