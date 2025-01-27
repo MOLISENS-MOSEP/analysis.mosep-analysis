@@ -36,6 +36,11 @@ parameters = {
             "2023-08-29T06:41:00",
         ],
     },
+    "27": {
+        "BAG_NAME": "molisens_met_2023_08_29-13_41_50_converted",
+        "DATA_DIR": str(config.INTERIM_DATA_FOLDER / "ViF_Roof" / "data"),
+        "TIMESTAMPS_HISTOGRAMS": [],
+    },
     "31": {
         "BAG_NAME": "molisens_met_2023_08_29-16_58_02_converted",
         "DATA_DIR": str(config.INTERIM_DATA_FOLDER / "ViF_Roof" / "data"),
@@ -50,11 +55,16 @@ parameters = {
             "2023-08-29T17:58:35",
         ],
     },
+    "95": {
+        "BAG_NAME": "molisens_met_2023_09_23-06_39_11_converted",
+        "DATA_DIR": str(config.INTERIM_DATA_FOLDER / "ViF_Roof" / "data"),
+        "TIMESTAMPS_HISTOGRAMS": [],
+    },
 }
 
 for run, params in parameters.items():
     pm.execute_notebook(
-        "notebooks/target_analysis/1.1_cg_target_analysis.ipynb",
-        f"notebooks/target_analysis/1.1_cg_target_analysis_{run}.ipynb",
+        "/workspaces/MOLISENSext_analysis/notebooks/target_analysis/1.1_cg_target_analysis.ipynb",
+        f"/workspaces/MOLISENSext_analysis/notebooks/target_analysis/1.1_cg_target_analysis_{run}.ipynb",
         parameters=params,
     )
