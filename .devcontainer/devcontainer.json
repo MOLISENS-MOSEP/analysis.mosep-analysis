@@ -9,6 +9,7 @@
 		"${localWorkspaceFolder}/.devcontainer/.env"
 	],
 	"mounts": [
+		"source=/home/chg/moseplib,target=/workspaces/MOLISENSext_analysis/moseplib,type=bind,consistency=cached",
 		// Uncomment and change the following lines to mount a directory from your local machine into the container.
 		// External data:
 		// "source=/path/to/external/data,target=/workspaces/MOLISENSext_analysis/data/0external,type=bind,consistency=cached",

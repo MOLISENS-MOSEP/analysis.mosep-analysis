@@ -79,7 +79,7 @@ if __name__ == "__main__":
     fig.show()
 
 if __name__.startswith("bokeh"):
-    from src.data import pointcloud_processing
+    from moseplib.data import pointcloud_processing
     from src.data.config import TARGET_EXTENTS
     import warnings
 

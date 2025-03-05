@@ -1,5 +1,5 @@
+from moseplib.data.utils import get_pointcloud_from_timestamp
 from src.data.config import TARGET_DISTANCES
-from src.data.utils import get_pointcloud_from_timestamp
 from src.visualization.utils_2d import compress_legend as compress_legend_fu
 
 import pandas as pd

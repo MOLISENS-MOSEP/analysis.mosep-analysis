@@ -1,5 +1,4 @@
-from src.data.utils import Limits
-
+from moseplib.data.utils import Limits
 from pathlib import Path
 
 
@@ -14,15 +13,6 @@ RAW_DATA_FOLDER = Path.joinpath(DATA_FOLDER, "1raw")
 INTERIM_DATA_FOLDER = Path.joinpath(DATA_FOLDER, "2interim")
 PROCESSED_DATA_FOLDER = Path.joinpath(DATA_FOLDER, "3processed")
 EXTERNAL_DATA_FOLDER = Path.joinpath(DATA_FOLDER, "0external")
-
-PATH_TO_LUFFT_MSGS = PROJECT_FOLDER / Path("src/config/custom_ros_msgs/lufft_wsx_interfaces/msg")
-
-PC_TOPICS = [
-    "/sensing/lidar/points",
-    "/sensing/lidar/points2",
-    "/sensing/radar/points",
-]
-FIELDS = ["x", "y", "z", "intensity", "t", "reflectivity", "ring", "ambient", "range", "original_id"]
 
 TARGET_EXTENTS_BA = [
     #      xmin,  xmax,  ymin, ymax, zmin,  zmax,  rmin, rmax

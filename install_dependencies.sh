@@ -8,6 +8,7 @@
 
 # install the local src package
 pip install --editable .
+pip install --editable ./moseplib
 
 # Add more dependencies here.
 # For example another github repo which you want to edit
