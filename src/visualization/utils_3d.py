@@ -3,7 +3,7 @@ import plotly.graph_objects as go
 import panel as pn
 
 
-def plot_cube(x_coords, y_coords, z_coords, color="red", opacity=0.6) -> go.Figure:
+def plot_cube(x_coords, y_coords, z_coords, name=None, color="red", opacity=0.6) -> go.Figure:
     """Plot a go.Mesh3d object representing a cube."""
 
     return go.Mesh3d(
@@ -19,11 +19,13 @@ def plot_cube(x_coords, y_coords, z_coords, color="red", opacity=0.6) -> go.Figu
         opacity=opacity,
         color=color,
         flatshading=True,
+        name=name,
+        hovertext=name,
         # Beautiful color but unnecessary.
-        # colorscale=[[0, "gold"], [0.5, "mediumturquoise"], [1, "magenta"]],
-        # intensity=np.linspace(0, 1, 12, endpoint=True),
-        # intensitymode="cell",
-        # showscale=False,
+        colorscale=[[0, "gold"], [0.5, "mediumturquoise"], [1, "magenta"]],
+        intensity=np.linspace(0, 1, 12, endpoint=True),
+        intensitymode="cell",
+        showscale=False,
     )
 
 

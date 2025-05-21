@@ -3,11 +3,14 @@
 import pandas as pd
 import plotly.graph_objs as go
 import dash
+
 # from jupyter_dash import JupyterDash
 from dash.dependencies import Input, Output, State
 
 
-def run_dash_3d_selection(df: pd.DataFrame, c_column="intensity", color_range=None) -> None:
+def run_dash_3d_selection(
+    df: pd.DataFrame, c_column: str = "intensity", color_range=None, verbose: bool = False
+) -> None:
     """Run a Dash app to display a 3D scatter plot and show statistics for selected points.
 
     Created with the help of ChatGPT 4o:
@@ -129,7 +132,8 @@ def run_dash_3d_selection(df: pd.DataFrame, c_column="intensity", color_range=No
         if selectedDataXY and "points" in selectedDataXY:
             selected_indices_xy = {point["pointIndex"] for point in selectedDataXY["points"]}
 
-        print("Selected indices from XY projection:", selected_indices_xy)
+        if verbose:
+            print("Selected indices from XY projection:", selected_indices_xy)
         return fig2dxy
 
     @app.callback(
@@ -142,7 +146,8 @@ def run_dash_3d_selection(df: pd.DataFrame, c_column="intensity", color_range=No
         if selectedDataXZ and "points" in selectedDataXZ:
             selected_indices_xz = {point["pointIndex"] for point in selectedDataXZ["points"]}
 
-        print("Selected indices from XZ projection:", selected_indices_xz)
+        if verbose:
+            print("Selected indices from XZ projection:", selected_indices_xz)
         return fig2dxz
 
     @app.callback(
@@ -168,7 +173,8 @@ def run_dash_3d_selection(df: pd.DataFrame, c_column="intensity", color_range=No
 
         selected_indices = list(selected_indices_xy.intersection(selected_indices_xz))
 
-        print("Intersection of selected indices:", selected_indices)
+        if verbose:
+            print("Intersection of selected indices:", selected_indices)
 
         if relayoutData3d and "scene.camera" in relayoutData3d:
             camera_settings = relayoutData3d["scene.camera"]
@@ -224,15 +230,29 @@ def run_dash_3d_selection(df: pd.DataFrame, c_column="intensity", color_range=No
         scatter3d_updated.update_layout(scene_camera=camera_settings)
 
         stats = selected_df.describe().transpose()[["min", "max", "mean", "count"]]
+
         return (
             scatter3d_updated,
-            dash.dash_table.DataTable(
-                data=stats.reset_index().to_dict("records"),
-                columns=[{"name": i, "id": i} for i in stats.reset_index().columns],
+            dash.html.Div(
+                [
+                    dash.html.P(
+                        "x_min={0:.2f}, x_max={1:.2f}, y_min={2:.2f}, y_max={3:.2f}, z_min={4:.2f}, z_max={5:.2f}".format(
+                            stats.loc["x", "min"] - 0.01,  # Subtract or add a 1 cm to make sure points are covered.
+                            stats.loc["x", "max"] + 0.01,
+                            stats.loc["y", "min"] - 0.01,
+                            stats.loc["y", "max"] + 0.01,
+                            stats.loc["z", "min"] - 0.01,
+                            stats.loc["z", "max"] + 0.01,
+                        )
+                    ),  # <-- Your custom text here
+                    dash.dash_table.DataTable(
+                        data=stats.reset_index().to_dict("records"),
+                        columns=[{"name": i, "id": i} for i in stats.reset_index().columns],
+                    ),
+                ]
             ),
         )
 
     # Run the app in Jupyter notebook
     return app
     # app.run_server(mode="external", debug=True)
-
