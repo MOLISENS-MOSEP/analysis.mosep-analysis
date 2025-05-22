@@ -1,0 +1,32 @@
+[project]
+name = "mosep-analysis"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Christoph Gaisberger", email = "Christoph.gaisberger@gmail.com" }
+]
+requires-python = ">=3.10"
+dependencies = [
+    "moseplib",
+    "panel",
+    "plotly",
+    "tabulate",
+    "python-frontmatter",
+    "dash",
+    "scikit-learn",
+    "statsmodels",
+    "papermill",
+    "ipykernel>=6.29.5",
+    "jupyter-bokeh>=4.0.5",
+]   
+
+[tool.uv.sources]
+moseplib = { workspace = true }
+
+[tool.uv.workspace]
+members = ["packages/*"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
