@@ -19,6 +19,7 @@ dependencies = [
     "papermill",
     "ipykernel>=6.29.5",
     "jupyter-bokeh>=4.0.5",
+    "seaborn>=0.13.2",
 ]   
 
 [tool.uv.sources]
