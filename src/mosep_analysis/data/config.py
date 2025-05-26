@@ -2,7 +2,7 @@ from moseplib.data.utils import Limits
 from pathlib import Path
 
 
-PROJECT_FOLDER = Path("~/mosep_analysis")
+PROJECT_FOLDER = Path.home() / "mosep-analysis"
 
 DATA_FOLDER = PROJECT_FOLDER / "data"
 
