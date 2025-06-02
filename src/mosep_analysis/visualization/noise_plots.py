@@ -49,60 +49,70 @@ def plot3d(pc1: PointCloud, pc2: PointCloud, exclude_dict: dict | None = None) -
     return fig
 
 
-def temporal_development(nrpc: Series, nrpw: Series, rr_differ: Series, rr_int_h: Series) -> go.Figure:
+def temporal_development(
+    nrpc: Series | None = None,
+    nrpw: Series | None = None,
+    rr_differ: Series | None = None,
+    rr_int_h: Series | None = None,
+) -> go.Figure:
     fig = make_subplots(specs=[[{"secondary_y": True}]])
-    fig.add_trace(
-        go.Bar(
-            x=rr_differ.index,
-            y=rr_differ,
-            # mode="lines",
-            name="Differential Precipitation [mm]",
-            width=1000,
-            marker=dict(color="#0290bf", line=dict(width=0)),
+    if rr_differ is not None:
+        fig.add_trace(
+            go.Bar(
+                x=rr_differ.index,
+                y=rr_differ,
+                # mode="lines",
+                name="Differential Precipitation (x 1000) [mm]",
+                width=1000,
+                marker=dict(color="#0290bf", line=dict(width=0)),
+            )
         )
-    )
-    fig.add_trace(
-        go.Scattergl(
-            x=rr_int_h.index,
-            y=rr_int_h,
-            mode="lines",
-            name="Precipitation Rate [mm/h]",
-            line=dict(
-                color="#000080",
-                width=3,
+    if rr_int_h is not None:
+        fig.add_trace(
+            go.Scattergl(
+                x=rr_int_h.index,
+                y=rr_int_h,
+                mode="lines",
+                name="Precipitation Rate [mm/h]",
+                line=dict(
+                    color="#000080",
+                    width=3,
+                ),
+            )
+        )
+    if nrpc is not None and nrpw is not None:
+        fig.add_trace(
+            go.Scatter(
+                x=nrpw.index,
+                y=nrpw + nrpc,
+                mode="lines",
+                name="Noise all",
+                line=dict(color="#d5196e", width=3),
             ),
+            secondary_y=True,
         )
-    )
-    fig.add_trace(
-        go.Scatter(
-            x=nrpc.index,
-            y=nrpc,
-            mode="lines",
-            name="Noise 0-0.6m",
-            line=dict(color="#9e00c0", width=2),
-        ),
-        secondary_y=True,
-    )
-    fig.add_trace(
-        go.Scatter(
-            x=nrpw.index,
-            y=nrpw,
-            mode="lines",
-            name="Noise >0.6m",
-            line=dict(color="#fea626", width=2),
-        ),
-        secondary_y=True,
-    )
-    fig.add_trace(
-        go.Scatter(
-            x=nrpw.index,
-            y=nrpw + nrpc,
-            mode="lines",
-            name="Noise all",
-            line=dict(color="#d5196e", width=3),
-        ),
-        secondary_y=True,
-    )
+    if nrpc is not None:
+        fig.add_trace(
+            go.Scatter(
+                x=nrpc.index,
+                y=nrpc,
+                mode="lines",
+                name="Noise 0-0.6m",
+                line=dict(color="#9e00c0", width=2),
+            ),
+            secondary_y=True,
+        )
+    if nrpw is not None:
+        fig.add_trace(
+            go.Scatter(
+                x=nrpw.index,
+                y=nrpw,
+                mode="lines",
+                name="Noise >0.6m",
+                line=dict(color="#fea626", width=2),
+            ),
+            secondary_y=True,
+        )
     fig.update_layout(
         template="ggplot2",
         autosize=False,
