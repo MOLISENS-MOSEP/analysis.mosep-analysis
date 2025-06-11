@@ -82,7 +82,7 @@ if __name__ == "__main__":
 
 if __name__.startswith("bokeh"):
     from moseplib.data import pointcloud_processing
-    from src.data.config import TARGET_EXTENTS
+    from mosep_analysis.data.config import TARGET_EXTENTS_VIF
     import warnings
 
     pn.extension("plotly")
@@ -100,7 +100,7 @@ if __name__.startswith("bokeh"):
 
     # Catch runtime warnings from apply_limits
     with warnings.catch_warnings(record=True):
-        targets_limited = [target.apply_limits(pc) for target in TARGET_EXTENTS]
+        targets_limited = [target.apply_limits(pc) for target in TARGET_EXTENTS_VIF]
 
     target_pcs = {f"Target {i}": c for i, c in enumerate(targets_limited) if len(c) > 0}
 
