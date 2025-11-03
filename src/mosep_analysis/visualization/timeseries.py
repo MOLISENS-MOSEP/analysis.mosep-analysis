@@ -1,6 +1,6 @@
 from moseplib.data.utils import get_pointcloud_from_timestamp
-from src.data.config import TARGET_DISTANCES
-from src.visualization.utils_2d import compress_legend as compress_legend_fu
+from mosep_analysis.data.config import TARGET_DISTANCES
+from mosep_analysis.visualization.utils_2d import compress_legend as compress_legend_fu
 
 import pandas as pd
 import plotly.express as px
@@ -30,14 +30,12 @@ def plot_timeseries_separate_axes(df: pd.DataFrame, parameters: dict) -> None:
     for i, (param, param_info) in enumerate(parameters.items(), start=1):
         if i == 1:
             layout_args[f"yaxis{i}"] = dict(
-                title=param_info["axis_title"],
-                titlefont=dict(color=param_info["color"]),
+                title=dict(text=param_info["axis_title"], font=dict(color=param_info["color"])),
                 tickfont=dict(color=param_info["color"]),
             )
         else:
             layout_args[f"yaxis{i}"] = dict(
-                title=param_info["axis_title"],
-                titlefont=dict(color=param_info["color"]),
+                title=dict(text=param_info["axis_title"], font=dict(color=param_info["color"])),
                 tickfont=dict(color=param_info["color"]),
                 anchor="free",
                 overlaying="y1",
@@ -60,14 +58,14 @@ def target_stat_vs_precipitation(
     target_df: pd.DataFrame,
     precipitation_se: pd.Series,
     value_name: str = "intensity",
-    exclude_cols: list[str] = None,
-    precipitation_name: str = None,
-    yaxis_title: str = None,
-    yaxis2_title: str = None,
+    exclude_cols: list[str] | None = None,
+    precipitation_name: str | None = None,
+    yaxis_title: str | None = None,
+    yaxis2_title: str | None = None,
     compress_legend: bool = False,
     fig_size: tuple[int, int] = (1000, 700),
 ):
-    if not precipitation_name:
+    if precipitation_name is None:
         precipitation_name = precipitation_se.name
 
     if len(target_df.columns.names) == 1:

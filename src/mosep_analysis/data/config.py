@@ -46,7 +46,15 @@ TARGET_EXTENTS_VIF = {
     ),
 }
 
-TARGET_DISTANCES = {k: round(v.r_min + (v.r_max - v.r_min) / 2, 2) for k, v in TARGET_EXTENTS_VIF.items()}
+
+def _get_target_distance(min_dist, max_dist):
+    """Helper to calculate the target distance from min and max distance."""
+    if min_dist is None or max_dist is None:
+        return None
+    return round(min_dist + (max_dist - min_dist) / 2, 2)
+
+
+TARGET_DISTANCES = {k: _get_target_distance(v.r_min, v.r_max) for k, v in TARGET_EXTENTS_VIF.items()}
 
 TARGET_EXTENTS_VIF_SPLITS = {
     "Target-01": {
