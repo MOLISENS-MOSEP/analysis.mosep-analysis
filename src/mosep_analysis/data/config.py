@@ -1,5 +1,6 @@
-from moseplib.data.utils import Limits
 from pathlib import Path
+
+from moseplib.data.utils import Limits
 
 
 PROJECT_FOLDER = Path.home() / "mosep-analysis"
@@ -13,6 +14,22 @@ RAW_DATA_FOLDER = Path("/nas/home/chg/MOLISENSext")
 INTERIM_DATA_FOLDER = Path("/datalocal/chg/MOLISENSext")
 PROCESSED_DATA_FOLDER = Path("/datalocal/chg/MOLISENSext/processed")
 EXTERNAL_DATA_FOLDER = Path.joinpath(DATA_FOLDER, "0external")
+
+BAG_NAMES_BY_NR = {
+    "0": "molisens_met_2023_08_07-15_36_45_converted",
+    "7": "molisens_met_2023_08_28-21_02_52_converted",
+    "8": "molisens_met_2023_08_28-21_40_13_converted",
+    "12": "molisens_met_2023_08_29-06_04_46_converted",
+    "17": "molisens_met_2023_08_29-08_21_47_converted",
+    "27": "molisens_met_2023_08_29-13_41_50_converted",
+    "31": "molisens_met_2023_08_29-16_58_02_converted",
+    "32": "molisens_met_2023_08_29-17_58_33_converted",
+    "39": "molisens_met_2023_08_30-15_34_22_converted",
+    "48": "molisens_met_2023_08_30-21_14_20_converted",
+    "95": "molisens_met_2023_09_23-06_39_11_converted",
+    "104": "molisens_met_2023_09_23-11_26_44_converted",
+}
+
 
 TARGET_EXTENTS_BA = [
     #      xmin,  xmax,  ymin, ymax, zmin,  zmax,  rmin, rmax

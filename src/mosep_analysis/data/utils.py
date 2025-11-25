@@ -2,8 +2,11 @@ import pickle
 from pathlib import Path
 from typing import Callable, Any
 
+from moseplib.data import pointcloud_processing
+from pointcloudset import Dataset
 
-def load_or_calculate(path: Path, calc_func: Callable[..., Any], *args, **kwargs) -> Any:
+
+def load_pickle_or_calculate(path: Path, calc_func: Callable[..., Any], *args, **kwargs) -> Any:
     """
     Loads a variable from a pickle file if it exists, otherwise calculates it using calc_func,
     saves it to the pickle file, and returns the result.
@@ -31,3 +34,28 @@ def load_or_calculate(path: Path, calc_func: Callable[..., Any], *args, **kwargs
         with open(path, "rb") as handle:
             result = pickle.load(handle)
     return result
+
+
+def load_or_resample_dataset(path: Path, ds: Dataset = None, *args, **kwargs) -> Any:
+    """Load or resample dataset.
+
+    Loads a resampled dataset from parquet files if they exist, otherwise resamples the given dataset,
+    saves the resampled datasets to parquet files, and returns the result.
+
+    Keyword arguments:
+    argument -- description
+    Return: return_description
+    """
+
+    if not path.is_dir() and ds is not None:
+        ds_res = pointcloud_processing.resample_dataset(ds, *args, **kwargs)
+        # Save the resampled datasets to parquet
+        for stat, ds in ds_res.items():
+            ds.to_file(path / stat, use_orig_filename=False)
+
+    # load from parquet
+    ds_res = {}
+    for p in path.iterdir():
+        ds_res[p.stem] = Dataset.from_file(p)
+
+    return ds_res
