@@ -68,6 +68,20 @@ TARGET_EXTENTS_VIF = {
     ),
 }
 
+OBSTACLES_VIF = {
+    "ws100": Limits(x_min=7.39, x_max=7.77, y_min=-1.65, y_max=-1.39, z_min=-2.5, z_max=0.41),
+    "ws501": Limits(x_min=6.086, x_max=6.43, y_min=-1.64, y_max=-1.39, z_min=-2.5, z_max=0.51),
+    "wall_left": Limits(x_min=-1.0, x_max=20, y_min=3.26, y_max=6, z_min=-2.5, z_max=0.18),
+    "box_1": Limits(x_min=-1.0, x_max=2.42, y_min=2.01, y_max=3.26, z_min=-2.5, z_max=0.18),
+    "box_2": Limits(x_min=5.97, x_max=8.43, y_min=2.31, y_max=3.26, z_min=-2.5, z_max=-0.04),
+    "pole_1": Limits(x_min=1.06, x_max=1.46, y_min=1.36, y_max=1.8, z_min=-2.5, z_max=0.73),
+    "pole_2": Limits(x_min=0.25, x_max=0.38, y_min=-3.45, y_max=-3.19, z_min=-2.5, z_max=1.28),
+    "pole_3": Limits(x_min=7.21, x_max=7.61, y_min=1.45, y_max=1.66, z_min=-2.5, z_max=1.47),
+    "pole_4": Limits(x_min=10.5, x_max=10.59, y_min=1.95, y_max=2.13, z_min=-2.5, z_max=1.52),
+    "pole_5": Limits(x_min=13.49, x_max=13.96, y_min=1.00, y_max=1.33, z_min=-2.5, z_max=3.49),
+    "pole_6": Limits(x_min=14.09, x_max=14.38, y_min=10.35, y_max=10.75, z_min=-2.5, z_max=4.50),
+}
+
 
 def _get_target_distance(min_dist, max_dist):
     """Helper to calculate the target distance from min and max distance."""

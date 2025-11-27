@@ -6,7 +6,7 @@ from pointcloudset import PointCloud
 from .utils_3d import plot_cube
 
 
-def plot3d(pc1: PointCloud, pc2: PointCloud, exclude_dict: dict | None = None) -> go.Figure:
+def plot3d(pc1: PointCloud, pc2: PointCloud | None = None, exclude_dict: dict | None = None) -> go.Figure:
     fig = pc1.plot(
         hover_data=True,
         color="N",
@@ -14,7 +14,7 @@ def plot3d(pc1: PointCloud, pc2: PointCloud, exclude_dict: dict | None = None) -
         color_continuous_scale="Turbo",
         width=1000,
         height=800,
-        overlay={"close": pc2},
+        overlay={"close": pc2} if pc2 else None,
     )
     fig.update_traces(marker={"size": 4}, opacity=0.7)
     camera = dict(eye=dict(x=0.001, y=0.0, z=2.5), projection=dict(type="orthographic"))
@@ -35,15 +35,16 @@ def plot3d(pc1: PointCloud, pc2: PointCloud, exclude_dict: dict | None = None) -
     )
 
     # Add cubes where points are excluded
-    for name, limits in exclude_dict.items():
-        fig.add_trace(
-            plot_cube(
-                *limits.get_vertices_from_limits(),
-                color="red",
-                opacity=0.6,
-                name=name,
+    if exclude_dict:
+        for name, limits in exclude_dict.items():
+            fig.add_trace(
+                plot_cube(
+                    *limits.get_vertices_from_limits(),
+                    color="red",
+                    opacity=0.6,
+                    name=name,
+                )
             )
-        )
     fig.layout.scene.aspectmode = "data"
     # fig.update_layout(hover)
     return fig
