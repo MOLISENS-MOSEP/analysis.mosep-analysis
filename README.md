@@ -1,6 +1,6 @@
 # MOSEP Analysis
 
-Analysis of LiDAR and radar point cloud data under varying weather and precipitation conditions, collected from the MOSEP (Modular Multi-Sensor System for Environment Perception) measurement setup.
+Analysis of LiDAR and radar point cloud data under varying weather and precipitation conditions, collected from the MOSEP (Modular Hardware and Software System for Multi-Sensor Environment Perception) measurement setup.
 
 ## Overview
 
